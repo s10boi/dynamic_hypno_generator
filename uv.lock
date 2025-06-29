@@ -48,7 +48,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "pedalboard", specifier = ">=0.9.17" },
+    { name = "pedalboard", git = "https://github.com/spotify/pedalboard" },
     { name = "pydantic", specifier = ">=2.11.7" },
     { name = "pyobjc", marker = "sys_platform == 'darwin'", specifier = ">=11.1" },
     { name = "pyttsx3", specifier = ">=2.98" },
@@ -111,19 +111,9 @@ wheels = [
 [[package]]
 name = "pedalboard"
 version = "0.9.17"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/spotify/pedalboard#7762b80fbd072bd226065ea2e23201e80557c6a0" }
 dependencies = [
     { name = "numpy" },
-]
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/29/16/acda34c777e7a3c0f67d2764fd7e064246d0e959b7c3dd085e531af4b593/pedalboard-0.9.17-cp313-cp313-macosx_10_14_x86_64.whl", hash = "sha256:55e9f6659245a882ff783a23219edcf51ede8305772f4595a47698fe443086d8", size = 2752947, upload-time = "2025-05-14T19:00:08.386Z" },
-    { url = "https://files.pythonhosted.org/packages/ac/8b/148bb209a9a87f290f6bdbc8f8f304304f44bb622d5211c2ec9e247311ef/pedalboard-0.9.17-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:df322a8fd092fe0aff5940f15fd4e3cccf54d7b2d340056487e3667b0377ff6a", size = 2533460, upload-time = "2025-05-14T19:00:09.754Z" },
-    { url = "https://files.pythonhosted.org/packages/8f/da/47106711d8b3fc5b588d4f834827dd193fe21fb946e934552fbc9b4c9fbb/pedalboard-0.9.17-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:51aa6d3da97d0f78df3d21e3cc9325f2689c9c746db9794eb7c97d6bc37f7b8d", size = 4657587, upload-time = "2025-05-14T19:00:12.116Z" },
-    { url = "https://files.pythonhosted.org/packages/a3/53/37062f43089e6079a44008753caa536e23f2861ccff8a748b1f5a44657f4/pedalboard-0.9.17-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e34585c036149612b7a0e82218c0c1d54ef431d5f94ec4e822badaebcb4159e2", size = 4834911, upload-time = "2025-05-14T19:00:13.507Z" },
-    { url = "https://files.pythonhosted.org/packages/72/48/e6a68ffc8351befd097d59a7f39998b57bc0df54d4f70350aa29ee2e56a2/pedalboard-0.9.17-cp313-cp313t-macosx_10_14_x86_64.whl", hash = "sha256:a1b456239f73770a4ce8e9ef3e0c8f622248d4595fe6c368a688fc2a62a38497", size = 2766547, upload-time = "2025-05-14T19:00:15.066Z" },
-    { url = "https://files.pythonhosted.org/packages/cf/dd/bbdc8eb6ab7b067460cff576fc8ac682002daee989234dfa3c0f0ef27e73/pedalboard-0.9.17-cp313-cp313t-macosx_11_0_arm64.whl", hash = "sha256:02985d319baf1ad75572854e5eba3edc45d42d4ead2ef03e333d4859fc7afa0e", size = 2580827, upload-time = "2025-05-14T19:00:16.418Z" },
-    { url = "https://files.pythonhosted.org/packages/b6/04/e5f2a4e9e1d3dc99fd7e8524316e650ed59367e77b52ec984e3fc37351aa/pedalboard-0.9.17-cp313-cp313t-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:7d02f078f1bb134f63f04eef041c311beba7f3a0d0b84b4c86b48874d903113d", size = 4661771, upload-time = "2025-05-14T19:00:17.767Z" },
-    { url = "https://files.pythonhosted.org/packages/34/b3/2250bd2caf36177b51224012e6ba485d3f193d0d0203df297c02a438b860/pedalboard-0.9.17-cp313-cp313t-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e9d3a5e4a97f4daf34836e4624147d9fcf1c90be4fc8bd2e60371abafb3e676a", size = 4838445, upload-time = "2025-05-14T19:00:19.158Z" },
 ]
 
 [[package]]

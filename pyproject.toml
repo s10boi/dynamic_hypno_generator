@@ -5,7 +5,7 @@ description = "Dynamically generate repeating hypnosis audio"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "pedalboard>=0.9.17",
+    "pedalboard",
     "pydantic>=2.11.7",
     "pyobjc>=11.1 ; sys_platform == 'darwin'",
     "pyttsx3>=2.98",
@@ -16,3 +16,6 @@ dev-dependencies = [
     "pytest>=8.3.2",
     "ruff>=0.6.4",
 ]
+
+[tool.uv.sources]
+pedalboard = { git = "https://github.com/spotify/pedalboard" }

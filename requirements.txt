@@ -6,7 +6,7 @@ comtypes==1.4.11 ; sys_platform == 'win32'
     # via pyttsx3
 numpy==2.3.1
     # via pedalboard
-pedalboard==0.9.17
+pedalboard @ git+https://github.com/spotify/pedalboard@7762b80fbd072bd226065ea2e23201e80557c6a0
     # via dynamic-hypno-generator (pyproject.toml)
 pydantic==2.11.7
     # via dynamic-hypno-generator (pyproject.toml)
