@@ -1,0 +1,18 @@
+[project]
+name = "dynamic-hypno-generator"
+version = "0.1.0"
+description = "Dynamically generate repeating hypnosis audio"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pedalboard>=0.9.17",
+    "pydantic>=2.11.7",
+    "pyobjc>=11.1",
+    "pyttsx3>=2.98",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.3.2",
+    "ruff>=0.6.4",
+]

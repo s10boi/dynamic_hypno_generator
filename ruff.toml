@@ -1,0 +1,38 @@
+target-version = "py313"
+line-length = 120
+preview = true
+lint.select = [
+    "ALL"
+]
+
+lint.ignore = [
+    "CPY001",  # Missing copyright notice
+    "D100",  # Missing docstring in public module
+    "D101",  # Missing docstring in public class
+    "D102",  # Missing docstring in public method
+    "D103",  # Missing docstring in public function
+    "D105",  # Missing docstring in magic method
+    "DOC201",  # Missing return in docstring
+    "T201",  # Warning for the use of "print"
+    "RUF001",  # Ambiguous characters (e.g. Chinese brackets)
+    "D106",  # Missing docstring in public nested class
+]
+
+[lint.pydocstyle]
+convention = "google"
+
+[lint.flake8-annotations]
+ignore-fully-untyped = true
+allow-star-arg-any = true
+
+[lint.per-file-ignores]
+"__init__.py" = [
+    "D104",  # Missing docstring in public package
+    "F401",  # Unused import
+    "F403",  # Import * used
+]
+"test_*.py" = [
+    "D",  # Ignore missing docstrings in tests
+    "PLC2701",  # Ignore too many local variables
+    "S101",  # Use of assert detected
+]
