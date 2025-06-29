@@ -36,7 +36,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "pedalboard" },
     { name = "pydantic" },
-    { name = "pyobjc" },
+    { name = "pyobjc", marker = "sys_platform == 'darwin'" },
     { name = "pyttsx3" },
 ]
 
@@ -50,7 +50,7 @@ dev = [
 requires-dist = [
     { name = "pedalboard", specifier = ">=0.9.17" },
     { name = "pydantic", specifier = ">=2.11.7" },
-    { name = "pyobjc", specifier = ">=11.1" },
+    { name = "pyobjc", marker = "sys_platform == 'darwin'", specifier = ">=11.1" },
     { name = "pyttsx3", specifier = ">=2.98" },
 ]
 

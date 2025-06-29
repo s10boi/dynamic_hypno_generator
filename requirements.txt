@@ -7,16 +7,16 @@ comtypes==1.4.11 ; sys_platform == 'win32'
 numpy==2.3.1
     # via pedalboard
 pedalboard==0.9.17
-    # via real-time-hypno (pyproject.toml)
+    # via dynamic-hypno-generator (pyproject.toml)
 pydantic==2.11.7
-    # via real-time-hypno (pyproject.toml)
+    # via dynamic-hypno-generator (pyproject.toml)
 pydantic-core==2.33.2
     # via pydantic
-pyobjc==11.1
+pyobjc==11.1 ; sys_platform == 'darwin'
     # via
-    #   real-time-hypno (pyproject.toml)
+    #   dynamic-hypno-generator (pyproject.toml)
     #   pyttsx3
-pyobjc-core==11.1
+pyobjc-core==11.1 ; sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-accessibility
@@ -176,66 +176,66 @@ pyobjc-core==11.1
     #   pyobjc-framework-virtualization
     #   pyobjc-framework-vision
     #   pyobjc-framework-webkit
-pyobjc-framework-accessibility==11.1 ; platform_release >= '20.0'
+pyobjc-framework-accessibility==11.1 ; platform_release >= '20.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-accounts==11.1 ; platform_release >= '12.0'
+pyobjc-framework-accounts==11.1 ; platform_release >= '12.0' and sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-cloudkit
-pyobjc-framework-addressbook==11.1
+pyobjc-framework-addressbook==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-adservices==11.1 ; platform_release >= '20.0'
+pyobjc-framework-adservices==11.1 ; platform_release >= '20.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-adsupport==11.1 ; platform_release >= '18.0'
+pyobjc-framework-adsupport==11.1 ; platform_release >= '18.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-applescriptkit==11.1
+pyobjc-framework-applescriptkit==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-applescriptobjc==11.1 ; platform_release >= '10.0'
+pyobjc-framework-applescriptobjc==11.1 ; platform_release >= '10.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-applicationservices==11.1
+pyobjc-framework-applicationservices==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-apptrackingtransparency==11.1 ; platform_release >= '20.0'
+pyobjc-framework-apptrackingtransparency==11.1 ; platform_release >= '20.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-audiovideobridging==11.1 ; platform_release >= '12.0'
+pyobjc-framework-audiovideobridging==11.1 ; platform_release >= '12.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-authenticationservices==11.1 ; platform_release >= '19.0'
+pyobjc-framework-authenticationservices==11.1 ; platform_release >= '19.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-automaticassessmentconfiguration==11.1 ; platform_release >= '19.0'
+pyobjc-framework-automaticassessmentconfiguration==11.1 ; platform_release >= '19.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-automator==11.1
+pyobjc-framework-automator==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-avfoundation==11.1 ; platform_release >= '11.0'
+pyobjc-framework-avfoundation==11.1 ; platform_release >= '11.0' and sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-cinematic
     #   pyobjc-framework-mediaextension
     #   pyobjc-framework-mediaplayer
     #   pyobjc-framework-phase
-pyobjc-framework-avkit==11.1 ; platform_release >= '13.0'
+pyobjc-framework-avkit==11.1 ; platform_release >= '13.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-avrouting==11.1 ; platform_release >= '22.0'
+pyobjc-framework-avrouting==11.1 ; platform_release >= '22.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-backgroundassets==11.1 ; platform_release >= '22.0'
+pyobjc-framework-backgroundassets==11.1 ; platform_release >= '22.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-browserenginekit==11.1 ; platform_release >= '23.4'
+pyobjc-framework-browserenginekit==11.1 ; platform_release >= '23.4' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-businesschat==11.1 ; platform_release >= '18.0'
+pyobjc-framework-businesschat==11.1 ; platform_release >= '18.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-calendarstore==11.1 ; platform_release >= '9.0'
+pyobjc-framework-calendarstore==11.1 ; platform_release >= '9.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-callkit==11.1 ; platform_release >= '20.0'
+pyobjc-framework-callkit==11.1 ; platform_release >= '20.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-carbon==11.1
+pyobjc-framework-carbon==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-cfnetwork==11.1
+pyobjc-framework-cfnetwork==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-cinematic==11.1 ; platform_release >= '23.0'
+pyobjc-framework-cinematic==11.1 ; platform_release >= '23.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-classkit==11.1 ; platform_release >= '20.0'
+pyobjc-framework-classkit==11.1 ; platform_release >= '20.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-cloudkit==11.1 ; platform_release >= '14.0'
+pyobjc-framework-cloudkit==11.1 ; platform_release >= '14.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-cocoa==11.1
+pyobjc-framework-cocoa==11.1 ; sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-accessibility
@@ -382,39 +382,39 @@ pyobjc-framework-cocoa==11.1
     #   pyobjc-framework-virtualization
     #   pyobjc-framework-vision
     #   pyobjc-framework-webkit
-pyobjc-framework-collaboration==11.1 ; platform_release >= '9.0'
+pyobjc-framework-collaboration==11.1 ; platform_release >= '9.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-colorsync==11.1 ; platform_release >= '17.0'
+pyobjc-framework-colorsync==11.1 ; platform_release >= '17.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-contacts==11.1 ; platform_release >= '15.0'
+pyobjc-framework-contacts==11.1 ; platform_release >= '15.0' and sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-contactsui
-pyobjc-framework-contactsui==11.1 ; platform_release >= '15.0'
+pyobjc-framework-contactsui==11.1 ; platform_release >= '15.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-coreaudio==11.1
+pyobjc-framework-coreaudio==11.1 ; sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-avfoundation
     #   pyobjc-framework-browserenginekit
     #   pyobjc-framework-coreaudiokit
-pyobjc-framework-coreaudiokit==11.1
+pyobjc-framework-coreaudiokit==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-corebluetooth==11.1 ; platform_release >= '14.0'
+pyobjc-framework-corebluetooth==11.1 ; platform_release >= '14.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-coredata==11.1
+pyobjc-framework-coredata==11.1 ; sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-cloudkit
     #   pyobjc-framework-syncservices
-pyobjc-framework-corehaptics==11.1 ; platform_release >= '19.0'
+pyobjc-framework-corehaptics==11.1 ; platform_release >= '19.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-corelocation==11.1 ; platform_release >= '10.0'
+pyobjc-framework-corelocation==11.1 ; platform_release >= '10.0' and sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-cloudkit
     #   pyobjc-framework-mapkit
-pyobjc-framework-coremedia==11.1 ; platform_release >= '11.0'
+pyobjc-framework-coremedia==11.1 ; platform_release >= '11.0' and sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-avfoundation
@@ -424,196 +424,196 @@ pyobjc-framework-coremedia==11.1 ; platform_release >= '11.0'
     #   pyobjc-framework-oslog
     #   pyobjc-framework-screencapturekit
     #   pyobjc-framework-videotoolbox
-pyobjc-framework-coremediaio==11.1 ; platform_release >= '11.0'
+pyobjc-framework-coremediaio==11.1 ; platform_release >= '11.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-coremidi==11.1
+pyobjc-framework-coremidi==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-coreml==11.1 ; platform_release >= '17.0'
+pyobjc-framework-coreml==11.1 ; platform_release >= '17.0' and sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-vision
-pyobjc-framework-coremotion==11.1 ; platform_release >= '19.0'
+pyobjc-framework-coremotion==11.1 ; platform_release >= '19.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-coreservices==11.1
+pyobjc-framework-coreservices==11.1 ; sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-dictionaryservices
     #   pyobjc-framework-launchservices
     #   pyobjc-framework-searchkit
-pyobjc-framework-corespotlight==11.1 ; platform_release >= '17.0'
+pyobjc-framework-corespotlight==11.1 ; platform_release >= '17.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-coretext==11.1
+pyobjc-framework-coretext==11.1 ; sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-applicationservices
-pyobjc-framework-corewlan==11.1 ; platform_release >= '10.0'
+pyobjc-framework-corewlan==11.1 ; platform_release >= '10.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-cryptotokenkit==11.1 ; platform_release >= '14.0'
+pyobjc-framework-cryptotokenkit==11.1 ; platform_release >= '14.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-datadetection==11.1 ; platform_release >= '21.0'
+pyobjc-framework-datadetection==11.1 ; platform_release >= '21.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-devicecheck==11.1 ; platform_release >= '19.0'
+pyobjc-framework-devicecheck==11.1 ; platform_release >= '19.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-devicediscoveryextension==11.1 ; platform_release >= '24.0'
+pyobjc-framework-devicediscoveryextension==11.1 ; platform_release >= '24.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-dictionaryservices==11.1 ; platform_release >= '9.0'
+pyobjc-framework-dictionaryservices==11.1 ; platform_release >= '9.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-discrecording==11.1
+pyobjc-framework-discrecording==11.1 ; sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-discrecordingui
-pyobjc-framework-discrecordingui==11.1
+pyobjc-framework-discrecordingui==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-diskarbitration==11.1
+pyobjc-framework-diskarbitration==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-dvdplayback==11.1
+pyobjc-framework-dvdplayback==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-eventkit==11.1 ; platform_release >= '12.0'
+pyobjc-framework-eventkit==11.1 ; platform_release >= '12.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-exceptionhandling==11.1
+pyobjc-framework-exceptionhandling==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-executionpolicy==11.1 ; platform_release >= '19.0'
+pyobjc-framework-executionpolicy==11.1 ; platform_release >= '19.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-extensionkit==11.1 ; platform_release >= '22.0'
+pyobjc-framework-extensionkit==11.1 ; platform_release >= '22.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-externalaccessory==11.1 ; platform_release >= '17.0'
+pyobjc-framework-externalaccessory==11.1 ; platform_release >= '17.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-fileprovider==11.1 ; platform_release >= '19.0'
+pyobjc-framework-fileprovider==11.1 ; platform_release >= '19.0' and sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-fileproviderui
-pyobjc-framework-fileproviderui==11.1 ; platform_release >= '19.0'
+pyobjc-framework-fileproviderui==11.1 ; platform_release >= '19.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-findersync==11.1 ; platform_release >= '14.0'
+pyobjc-framework-findersync==11.1 ; platform_release >= '14.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-fsevents==11.1
+pyobjc-framework-fsevents==11.1 ; sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-coreservices
-pyobjc-framework-fskit==11.1 ; platform_release >= '24.4'
+pyobjc-framework-fskit==11.1 ; platform_release >= '24.4' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-gamecenter==11.1 ; platform_release >= '12.0'
+pyobjc-framework-gamecenter==11.1 ; platform_release >= '12.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-gamecontroller==11.1 ; platform_release >= '13.0'
+pyobjc-framework-gamecontroller==11.1 ; platform_release >= '13.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-gamekit==11.1 ; platform_release >= '12.0'
+pyobjc-framework-gamekit==11.1 ; platform_release >= '12.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-gameplaykit==11.1 ; platform_release >= '15.0'
+pyobjc-framework-gameplaykit==11.1 ; platform_release >= '15.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-healthkit==11.1 ; platform_release >= '22.0'
+pyobjc-framework-healthkit==11.1 ; platform_release >= '22.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-imagecapturecore==11.1 ; platform_release >= '10.0'
+pyobjc-framework-imagecapturecore==11.1 ; platform_release >= '10.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-inputmethodkit==11.1 ; platform_release >= '9.0'
+pyobjc-framework-inputmethodkit==11.1 ; platform_release >= '9.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-installerplugins==11.1
+pyobjc-framework-installerplugins==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-instantmessage==11.1 ; platform_release >= '9.0'
+pyobjc-framework-instantmessage==11.1 ; platform_release >= '9.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-intents==11.1 ; platform_release >= '16.0'
+pyobjc-framework-intents==11.1 ; platform_release >= '16.0' and sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-intentsui
-pyobjc-framework-intentsui==11.1 ; platform_release >= '21.0'
+pyobjc-framework-intentsui==11.1 ; platform_release >= '21.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-iobluetooth==11.1
+pyobjc-framework-iobluetooth==11.1 ; sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-iobluetoothui
-pyobjc-framework-iobluetoothui==11.1
+pyobjc-framework-iobluetoothui==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-iosurface==11.1 ; platform_release >= '10.0'
+pyobjc-framework-iosurface==11.1 ; platform_release >= '10.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-ituneslibrary==11.1 ; platform_release >= '10.0'
+pyobjc-framework-ituneslibrary==11.1 ; platform_release >= '10.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-kernelmanagement==11.1 ; platform_release >= '20.0'
+pyobjc-framework-kernelmanagement==11.1 ; platform_release >= '20.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-latentsemanticmapping==11.1
+pyobjc-framework-latentsemanticmapping==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-launchservices==11.1
+pyobjc-framework-launchservices==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-libdispatch==11.1 ; platform_release >= '12.0'
+pyobjc-framework-libdispatch==11.1 ; platform_release >= '12.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-libxpc==11.1 ; platform_release >= '12.0'
+pyobjc-framework-libxpc==11.1 ; platform_release >= '12.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-linkpresentation==11.1 ; platform_release >= '19.0'
+pyobjc-framework-linkpresentation==11.1 ; platform_release >= '19.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-localauthentication==11.1 ; platform_release >= '14.0'
+pyobjc-framework-localauthentication==11.1 ; platform_release >= '14.0' and sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-localauthenticationembeddedui
-pyobjc-framework-localauthenticationembeddedui==11.1 ; platform_release >= '21.0'
+pyobjc-framework-localauthenticationembeddedui==11.1 ; platform_release >= '21.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-mailkit==11.1 ; platform_release >= '21.0'
+pyobjc-framework-mailkit==11.1 ; platform_release >= '21.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-mapkit==11.1 ; platform_release >= '13.0'
+pyobjc-framework-mapkit==11.1 ; platform_release >= '13.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-mediaaccessibility==11.1 ; platform_release >= '13.0'
+pyobjc-framework-mediaaccessibility==11.1 ; platform_release >= '13.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-mediaextension==11.1 ; platform_release >= '24.0'
+pyobjc-framework-mediaextension==11.1 ; platform_release >= '24.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-medialibrary==11.1 ; platform_release >= '13.0'
+pyobjc-framework-medialibrary==11.1 ; platform_release >= '13.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-mediaplayer==11.1 ; platform_release >= '16.0'
+pyobjc-framework-mediaplayer==11.1 ; platform_release >= '16.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-mediatoolbox==11.1 ; platform_release >= '13.0'
+pyobjc-framework-mediatoolbox==11.1 ; platform_release >= '13.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-metal==11.1 ; platform_release >= '15.0'
+pyobjc-framework-metal==11.1 ; platform_release >= '15.0' and sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-cinematic
     #   pyobjc-framework-metalfx
     #   pyobjc-framework-metalkit
     #   pyobjc-framework-metalperformanceshaders
-pyobjc-framework-metalfx==11.1 ; platform_release >= '22.0'
+pyobjc-framework-metalfx==11.1 ; platform_release >= '22.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-metalkit==11.1 ; platform_release >= '15.0'
+pyobjc-framework-metalkit==11.1 ; platform_release >= '15.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-metalperformanceshaders==11.1 ; platform_release >= '17.0'
+pyobjc-framework-metalperformanceshaders==11.1 ; platform_release >= '17.0' and sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-metalperformanceshadersgraph
-pyobjc-framework-metalperformanceshadersgraph==11.1 ; platform_release >= '20.0'
+pyobjc-framework-metalperformanceshadersgraph==11.1 ; platform_release >= '20.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-metrickit==11.1 ; platform_release >= '21.0'
+pyobjc-framework-metrickit==11.1 ; platform_release >= '21.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-mlcompute==11.1 ; platform_release >= '20.0'
+pyobjc-framework-mlcompute==11.1 ; platform_release >= '20.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-modelio==11.1 ; platform_release >= '15.0'
+pyobjc-framework-modelio==11.1 ; platform_release >= '15.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-multipeerconnectivity==11.1 ; platform_release >= '14.0'
+pyobjc-framework-multipeerconnectivity==11.1 ; platform_release >= '14.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-naturallanguage==11.1 ; platform_release >= '18.0'
+pyobjc-framework-naturallanguage==11.1 ; platform_release >= '18.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-netfs==11.1 ; platform_release >= '10.0'
+pyobjc-framework-netfs==11.1 ; platform_release >= '10.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-network==11.1 ; platform_release >= '18.0'
+pyobjc-framework-network==11.1 ; platform_release >= '18.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-networkextension==11.1 ; platform_release >= '15.0'
+pyobjc-framework-networkextension==11.1 ; platform_release >= '15.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-notificationcenter==11.1 ; platform_release >= '14.0'
+pyobjc-framework-notificationcenter==11.1 ; platform_release >= '14.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-opendirectory==11.1 ; platform_release >= '10.0'
+pyobjc-framework-opendirectory==11.1 ; platform_release >= '10.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-osakit==11.1
+pyobjc-framework-osakit==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-oslog==11.1 ; platform_release >= '19.0'
+pyobjc-framework-oslog==11.1 ; platform_release >= '19.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-passkit==11.1 ; platform_release >= '20.0'
+pyobjc-framework-passkit==11.1 ; platform_release >= '20.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-pencilkit==11.1 ; platform_release >= '19.0'
+pyobjc-framework-pencilkit==11.1 ; platform_release >= '19.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-phase==11.1 ; platform_release >= '21.0'
+pyobjc-framework-phase==11.1 ; platform_release >= '21.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-photos==11.1 ; platform_release >= '15.0'
+pyobjc-framework-photos==11.1 ; platform_release >= '15.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-photosui==11.1 ; platform_release >= '15.0'
+pyobjc-framework-photosui==11.1 ; platform_release >= '15.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-preferencepanes==11.1
+pyobjc-framework-preferencepanes==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-pushkit==11.1 ; platform_release >= '19.0'
+pyobjc-framework-pushkit==11.1 ; platform_release >= '19.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-quartz==11.1
+pyobjc-framework-quartz==11.1 ; sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-accessibility
@@ -636,95 +636,95 @@ pyobjc-framework-quartz==11.1
     #   pyobjc-framework-spritekit
     #   pyobjc-framework-videotoolbox
     #   pyobjc-framework-vision
-pyobjc-framework-quicklookthumbnailing==11.1 ; platform_release >= '19.0'
+pyobjc-framework-quicklookthumbnailing==11.1 ; platform_release >= '19.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-replaykit==11.1 ; platform_release >= '20.0'
+pyobjc-framework-replaykit==11.1 ; platform_release >= '20.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-safariservices==11.1 ; platform_release >= '16.0'
+pyobjc-framework-safariservices==11.1 ; platform_release >= '16.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-safetykit==11.1 ; platform_release >= '22.0'
+pyobjc-framework-safetykit==11.1 ; platform_release >= '22.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-scenekit==11.1 ; platform_release >= '11.0'
+pyobjc-framework-scenekit==11.1 ; platform_release >= '11.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-screencapturekit==11.1 ; platform_release >= '21.4'
+pyobjc-framework-screencapturekit==11.1 ; platform_release >= '21.4' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-screensaver==11.1
+pyobjc-framework-screensaver==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-screentime==11.1 ; platform_release >= '20.0'
+pyobjc-framework-screentime==11.1 ; platform_release >= '20.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-scriptingbridge==11.1 ; platform_release >= '9.0'
+pyobjc-framework-scriptingbridge==11.1 ; platform_release >= '9.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-searchkit==11.1
+pyobjc-framework-searchkit==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-security==11.1
+pyobjc-framework-security==11.1 ; sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-localauthentication
     #   pyobjc-framework-securityfoundation
     #   pyobjc-framework-securityinterface
     #   pyobjc-framework-securityui
-pyobjc-framework-securityfoundation==11.1
+pyobjc-framework-securityfoundation==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-securityinterface==11.1
+pyobjc-framework-securityinterface==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-securityui==11.1 ; platform_release >= '24.4'
+pyobjc-framework-securityui==11.1 ; platform_release >= '24.4' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-sensitivecontentanalysis==11.1 ; platform_release >= '23.0'
+pyobjc-framework-sensitivecontentanalysis==11.1 ; platform_release >= '23.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-servicemanagement==11.1 ; platform_release >= '10.0'
+pyobjc-framework-servicemanagement==11.1 ; platform_release >= '10.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-sharedwithyou==11.1 ; platform_release >= '22.0'
+pyobjc-framework-sharedwithyou==11.1 ; platform_release >= '22.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-sharedwithyoucore==11.1 ; platform_release >= '22.0'
+pyobjc-framework-sharedwithyoucore==11.1 ; platform_release >= '22.0' and sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-sharedwithyou
-pyobjc-framework-shazamkit==11.1 ; platform_release >= '21.0'
+pyobjc-framework-shazamkit==11.1 ; platform_release >= '21.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-social==11.1 ; platform_release >= '12.0'
+pyobjc-framework-social==11.1 ; platform_release >= '12.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-soundanalysis==11.1 ; platform_release >= '19.0'
+pyobjc-framework-soundanalysis==11.1 ; platform_release >= '19.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-speech==11.1 ; platform_release >= '19.0'
+pyobjc-framework-speech==11.1 ; platform_release >= '19.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-spritekit==11.1 ; platform_release >= '13.0'
+pyobjc-framework-spritekit==11.1 ; platform_release >= '13.0' and sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-gameplaykit
-pyobjc-framework-storekit==11.1 ; platform_release >= '11.0'
+pyobjc-framework-storekit==11.1 ; platform_release >= '11.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-symbols==11.1 ; platform_release >= '23.0'
+pyobjc-framework-symbols==11.1 ; platform_release >= '23.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-syncservices==11.1
+pyobjc-framework-syncservices==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-systemconfiguration==11.1
+pyobjc-framework-systemconfiguration==11.1 ; sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-systemextensions==11.1 ; platform_release >= '19.0'
+pyobjc-framework-systemextensions==11.1 ; platform_release >= '19.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-threadnetwork==11.1 ; platform_release >= '22.0'
+pyobjc-framework-threadnetwork==11.1 ; platform_release >= '22.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-uniformtypeidentifiers==11.1 ; platform_release >= '20.0'
+pyobjc-framework-uniformtypeidentifiers==11.1 ; platform_release >= '20.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-usernotifications==11.1 ; platform_release >= '18.0'
+pyobjc-framework-usernotifications==11.1 ; platform_release >= '18.0' and sys_platform == 'darwin'
     # via
     #   pyobjc
     #   pyobjc-framework-usernotificationsui
-pyobjc-framework-usernotificationsui==11.1 ; platform_release >= '20.0'
+pyobjc-framework-usernotificationsui==11.1 ; platform_release >= '20.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-videosubscriberaccount==11.1 ; platform_release >= '18.0'
+pyobjc-framework-videosubscriberaccount==11.1 ; platform_release >= '18.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-videotoolbox==11.1 ; platform_release >= '12.0'
+pyobjc-framework-videotoolbox==11.1 ; platform_release >= '12.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-virtualization==11.1 ; platform_release >= '20.0'
+pyobjc-framework-virtualization==11.1 ; platform_release >= '20.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-vision==11.1 ; platform_release >= '17.0'
+pyobjc-framework-vision==11.1 ; platform_release >= '17.0' and sys_platform == 'darwin'
     # via pyobjc
-pyobjc-framework-webkit==11.1
+pyobjc-framework-webkit==11.1 ; sys_platform == 'darwin'
     # via pyobjc
 pypiwin32==223 ; sys_platform == 'win32'
     # via pyttsx3
 pyttsx3==2.98
-    # via real-time-hypno (pyproject.toml)
+    # via dynamic-hypno-generator (pyproject.toml)
 pywin32==310 ; sys_platform == 'win32'
     # via
     #   pypiwin32

@@ -7,7 +7,7 @@ requires-python = ">=3.13"
 dependencies = [
     "pedalboard>=0.9.17",
     "pydantic>=2.11.7",
-    "pyobjc>=11.1",
+    "pyobjc>=11.1 ; sys_platform == 'darwin'",
     "pyttsx3>=2.98",
 ]
 

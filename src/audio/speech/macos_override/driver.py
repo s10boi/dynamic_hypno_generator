@@ -1,15 +1,18 @@
 import weakref
+from typing import final
 
 from pyttsx3.driver import DriverProxy
 
-from src.audio.speech.macos_override.nsss import buildDriver  # type: ignore
+from src.audio.speech.macos_override.nsss import buildDriver  # pyright: ignore[reportUnknownVariableType]
 
 
+@final
 class HypnoDriverProxy(DriverProxy):
     """Quick override of the DriverProxy class to fix issues with macOS TTS."""
 
-    def __init__(self, engine, driverName, debug):  # type: ignore  # noqa: D107, N803, ARG002
-        self._driver = buildDriver(weakref.proxy(self))  # type: ignore
+    def __init__(self, engine, driverName, debug):  # pyright: ignore[reportMissingSuperCall, reportUnknownParameterType, reportMissingParameterType]  # noqa: ARG002, N803
+        """Initialize the HypnoDriverProxy."""
+        self._driver = buildDriver(weakref.proxy(self))
         # initialize refs
         self._engine = engine
         self._queue = []
