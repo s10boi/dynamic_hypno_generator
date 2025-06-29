@@ -9,11 +9,16 @@ from src.config import Config, read_args
 from src.filepath_generators.text_based import ShuffledTextFileBasedFilePathGenerator
 from src.filepath_queue import queue_filepaths
 
+DEFAULT_CONFIG_PATH = Path("./import/settings/default.json")
+
 
 def main() -> None:
     # Get settings
     args = read_args()
-    config = Config.from_args(json_filepath=args.config, text_filepath=args.text_filepath)
+    config = Config.from_args(
+        json_filepath=args.config or DEFAULT_CONFIG_PATH,
+        text_filepath=args.text_filepath,
+    )
 
     # Start generating audio files from the lines in the source text file
     audio_filepaths: dict[str, Path] = {}

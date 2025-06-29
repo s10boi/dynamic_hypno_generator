@@ -76,7 +76,7 @@ class Config(BaseModel):
         """
         if json_filepath and json_filepath.exists():
             try:
-                config = cls.model_validate_json(json.loads(json_filepath.read_text()))
+                config = cls.model_validate(json.loads(json_filepath.read_text()))
             except ValidationError as e:
                 print(f"Validation error reading {json_filepath}: {e}")
                 config = cls()
