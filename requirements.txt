@@ -6,16 +6,16 @@ comtypes==1.4.11 ; sys_platform == 'win32'
     # via pyttsx3
 numpy==2.3.1
     # via pedalboard
-pedalboard @ git+https://github.com/spotify/pedalboard@7762b80fbd072bd226065ea2e23201e80557c6a0
+pedalboard==0.9.17 ; sys_platform != 'win_amd64'
+    # via dynamic-hypno-generator (pyproject.toml)
+pedalboard @ git+https://github.com/spotify/pedalboard@7762b80fbd072bd226065ea2e23201e80557c6a0 ; sys_platform == 'win_amd64'
     # via dynamic-hypno-generator (pyproject.toml)
 pydantic==2.11.7
     # via dynamic-hypno-generator (pyproject.toml)
 pydantic-core==2.33.2
     # via pydantic
 pyobjc==11.1 ; sys_platform == 'darwin'
-    # via
-    #   dynamic-hypno-generator (pyproject.toml)
-    #   pyttsx3
+    # via pyttsx3
 pyobjc-core==11.1 ; sys_platform == 'darwin'
     # via
     #   pyobjc
@@ -723,7 +723,7 @@ pyobjc-framework-webkit==11.1 ; sys_platform == 'darwin'
     # via pyobjc
 pypiwin32==223 ; sys_platform == 'win32'
     # via pyttsx3
-pyttsx3==2.98
+pyttsx3==2.99
     # via dynamic-hypno-generator (pyproject.toml)
 pywin32==310 ; sys_platform == 'win32'
     # via

@@ -41,7 +41,6 @@ dependencies = [
     { name = "pedalboard", version = "0.9.17", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'win_amd64'" },
     { name = "pedalboard", version = "0.9.17", source = { git = "https://github.com/spotify/pedalboard#7762b80fbd072bd226065ea2e23201e80557c6a0" }, marker = "sys_platform == 'win_amd64'" },
     { name = "pydantic" },
-    { name = "pyobjc", marker = "sys_platform == 'darwin'" },
     { name = "pyttsx3" },
 ]
 
@@ -53,10 +52,9 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "pedalboard", marker = "sys_platform != 'win_amd64'" },
+    { name = "pedalboard", marker = "sys_platform != 'win_amd64'", specifier = ">=0.9.17" },
     { name = "pedalboard", marker = "sys_platform == 'win_amd64'", git = "https://github.com/spotify/pedalboard" },
     { name = "pydantic", specifier = ">=2.11.7" },
-    { name = "pyobjc", marker = "sys_platform == 'darwin'", specifier = ">=11.1" },
     { name = "pyttsx3", specifier = ">=2.99" },
 ]
 
