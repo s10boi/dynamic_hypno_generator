@@ -16,3 +16,6 @@ dev-dependencies = [
     "pytest>=8.3.2",
     "ruff>=0.6.4",
 ]
+
+[tool.uv.sources]
+pedalboard = { git = "https://github.com/spotify/pedalboard", marker = "sys_platform == 'win_amd64'" }
