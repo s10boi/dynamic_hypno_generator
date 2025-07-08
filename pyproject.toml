@@ -8,7 +8,7 @@ dependencies = [
     "pedalboard",
     "pydantic>=2.11.7",
     "pyobjc>=11.1 ; sys_platform == 'darwin'",
-    "pyttsx3>=2.98",
+    "pyttsx3>=2.99",
 ]
 
 [tool.uv]
@@ -16,6 +16,3 @@ dev-dependencies = [
     "pytest>=8.3.2",
     "ruff>=0.6.4",
 ]
-
-[tool.uv.sources]
-pedalboard = { git = "https://github.com/spotify/pedalboard" }
