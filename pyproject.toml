@@ -5,6 +5,7 @@ description = "Dynamically generate repeating hypnosis audio"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "loguru>=0.7.3",
     "pedalboard>=0.9.17",
     "pydantic>=2.11.7",
     "pyttsx3>=2.99",

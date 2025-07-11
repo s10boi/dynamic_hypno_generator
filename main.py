@@ -1,6 +1,10 @@
+import multiprocessing
+import sys
 import threading
 import time
 from pathlib import Path
+
+from loguru import logger
 
 from src.audio.line_player import get_line_players
 from src.audio.repeating_player import RepeatingAudioPlayer
@@ -13,6 +17,13 @@ DEFAULT_CONFIG_PATH = Path("./import/settings/default.json")
 
 
 def main() -> None:
+    # Logging
+    logger.remove(0)
+    _ = logger.add(
+        sys.stderr,
+        level="DEBUG",
+    )
+
     # Get settings
     args = read_args()
     config = Config.from_args(
@@ -21,22 +32,23 @@ def main() -> None:
     )
 
     # Start generating audio files from the lines in the source text file
-    audio_filepaths: dict[str, Path] = {}
+    manager = multiprocessing.Manager()
+    audio_filepaths = manager.dict()
+    audio_filepaths_lock = manager.Lock()
 
-    audio_generator_thread = threading.Thread(
+    audio_generator_process = multiprocessing.Process(
         target=generate_audio,
         kwargs={
             "text_filepath": config.text_filepath,
             "output_audio_dir": config.line_dir,
             "exported_files": audio_filepaths,
+            "exported_files_lock": audio_filepaths_lock,
             "output_audio_file_extension": "wav",
-            "check_interval": config.text_file_check_interval,
         },
         daemon=True,
     )
-    audio_generator_thread.start()
 
-    time.sleep(3)
+    audio_generator_process.start()
 
     if config.play_background_audio:
         # Start playing the background tone/noise
@@ -65,6 +77,7 @@ def main() -> None:
             "generator": filepath_generator,
             "line_players": line_players,
             "audio_filepaths": audio_filepaths,
+            "audio_filepaths_lock": audio_filepaths_lock,
         },
         daemon=True,
     )

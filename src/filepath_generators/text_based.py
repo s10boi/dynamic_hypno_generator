@@ -1,4 +1,7 @@
+import multiprocessing
+import multiprocessing.synchronize
 import random
+import time
 from abc import ABC, abstractmethod
 from collections.abc import Iterator
 from pathlib import Path
@@ -8,6 +11,25 @@ from src.shared import clean_line
 
 
 class TextFileBasedFilePathGenerator(ABC):
+    def generate_filepaths_with_lock(
+        self,
+        audio_filepaths: dict[str, Path],
+        audio_filepaths_lock: multiprocessing.synchronize.Lock,
+    ) -> Iterator[tuple[str, Path]]:
+        for raw_line in self.get_text_lines():
+            line = clean_line(raw_line)
+            while True:
+                with audio_filepaths_lock:
+                    try:
+                        audio_filepath = audio_filepaths[line]
+                    except KeyError:
+                        audio_filepath = None
+                if audio_filepath and audio_filepath.exists() and audio_filepath.stat().st_size > 0:
+                    yield line, audio_filepath
+                    break
+                else:
+                    time.sleep(0.1)
+
     """Abstract base class for generating audio file paths from lines in a text file."""
 
     def __init__(self, text_filepath: Path, output_audio_dir: Path, output_audio_file_extension: str = "wav") -> None:  # pyright: ignore[reportMissingSuperCall]
