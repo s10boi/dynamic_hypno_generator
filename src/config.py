@@ -13,11 +13,6 @@ class Config(BaseModel):
         default=Path("./import/text/lines.txt"),
         description="Path to the text file containing lines.",
     )
-    text_file_check_interval: float = Field(
-        default=5.0,
-        gt=0.0,
-        description="Interval in seconds to check for changes in the text file.",
-    )
     line_dir: Path = Field(
         default=Path("./import/audio/lines"),
         description="Directory where audio files for lines will be stored.",

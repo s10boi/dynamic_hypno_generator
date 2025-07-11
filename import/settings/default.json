@@ -1,6 +1,5 @@
 {
     "text_filepath": "./import/text/lines.txt",
-    "text_file_check_interval": 5.0,
     "line_dir": "./import/audio/lines",
     "play_background_audio": true,
     "background_chunk_size": 8000,

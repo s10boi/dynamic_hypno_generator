@@ -10,8 +10,7 @@ from src.audio.line_player import get_line_players
 from src.audio.repeating_player import RepeatingAudioPlayer
 from src.audio.tts import generate_audio
 from src.config import Config, read_args
-from src.filepath_generators.text_based import ShuffledTextFileBasedFilePathGenerator
-from src.filepath_queue import queue_filepaths
+from src.filepath_queue import get_shuffled_filepaths, queue_filepaths
 
 DEFAULT_CONFIG_PATH = Path("./import/settings/default.json")
 
@@ -65,16 +64,10 @@ def main() -> None:
 
     line_players = get_line_players(initial_pitch_shift=config.initial_pitch_shift, echoes=config.max_echoes)
 
-    filepath_generator = ShuffledTextFileBasedFilePathGenerator(
-        text_filepath=Path("./import/text/lines.txt"),
-        output_audio_dir=config.line_dir,
-        output_audio_file_extension="wav",
-    )
-
     filepath_queue_thread = threading.Thread(
         target=queue_filepaths,
         kwargs={
-            "generator": filepath_generator,
+            "filepath_chooser": get_shuffled_filepaths,
             "line_players": line_players,
             "audio_filepaths": audio_filepaths,
             "audio_filepaths_lock": audio_filepaths_lock,
