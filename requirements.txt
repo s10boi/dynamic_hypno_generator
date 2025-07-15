@@ -2,10 +2,16 @@
 #    uv pip compile pyproject.toml -o requirements.txt --universal
 annotated-types==0.7.0
     # via pydantic
+colorama==0.4.6 ; sys_platform == 'win32'
+    # via loguru
 comtypes==1.4.11 ; sys_platform == 'win32'
     # via pyttsx3
+loguru==0.7.3
+    # via dynamic-hypno-generator (pyproject.toml)
 numpy==2.3.1
-    # via pedalboard
+    # via
+    #   dynamic-hypno-generator (pyproject.toml)
+    #   pedalboard
 pedalboard==0.9.17 ; sys_platform != 'win_amd64'
     # via dynamic-hypno-generator (pyproject.toml)
 pedalboard @ git+https://github.com/spotify/pedalboard@7762b80fbd072bd226065ea2e23201e80557c6a0 ; sys_platform == 'win_amd64'
@@ -736,3 +742,5 @@ typing-extensions==4.14.0
     #   typing-inspection
 typing-inspection==0.4.1
     # via pydantic
+win32-setctime==1.2.0 ; sys_platform == 'win32'
+    # via loguru
