@@ -102,10 +102,10 @@ def main() -> None:
 
     # MANTRA PLAYBACK
     # ================
-    if config.play_mantra:
+    if config.mantra_filepath:
         time.sleep(config.mantra_start_delay)  # Delay before starting the mantra
 
-        mantra_player = RepeatingAudioPlayer(audio_filepath=Path("./import/audio/mantras/mantra.mp3"))
+        mantra_player = RepeatingAudioPlayer(audio_filepath=config.mantra_filepath)
         mantra_player_thread = threading.Thread(
             target=mantra_player.play_audio_file,
             args=(config.background_chunk_size,),
