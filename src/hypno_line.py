@@ -30,7 +30,7 @@ class HypnoLine:
 
 def clean_line(text: str) -> str:
     """Standardises the line text to avoid duplicates."""
-    return text.lower().strip().rstrip(".").strip()
+    return text.strip().rstrip(".").strip()
 
 
 def get_filepath_from_line(text: str, output_audio_dir: Path) -> Path:

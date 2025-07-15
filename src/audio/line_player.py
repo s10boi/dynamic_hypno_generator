@@ -54,7 +54,7 @@ class LinePlayer:
 
     def _play_file(self, *, hypno_line: HypnoLine, stream: AudioStream, chunk_size: int, max_delay: int) -> None:
         """Play a single audio file with the pedalboard effects."""
-        print(f"Playing: {hypno_line.text}")
+        print(hypno_line.text)
 
         with AudioFile(str(hypno_line.filepath), "r").resampled_to(stream.sample_rate) as audio_file:  # pyright: ignore[reportArgumentType, reportAttributeAccessIssue, reportUnknownVariableType]
             try:

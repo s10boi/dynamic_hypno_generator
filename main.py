@@ -11,6 +11,11 @@ from src.log import configure_logger
 
 DEFAULT_CONFIG_PATH = Path("./config.json")
 
+BACKGROUND_AUDIO: dict[str, Path] = {
+    "tone": Path("./import/audio/background/tone.wav"),
+    "noise": Path("./import/audio/background/noise.wav"),
+}
+
 
 def main() -> None:
     # SETUP
@@ -24,6 +29,7 @@ def main() -> None:
     config = Config.from_args(
         json_filepath=args.config or DEFAULT_CONFIG_PATH,
         text_filepath=args.text_filepath,
+        available_backgrounds=BACKGROUND_AUDIO.keys(),
     )
 
     # HYPNO LINE GENERATION
@@ -47,10 +53,14 @@ def main() -> None:
 
     audio_generator_process.start()
 
+    # Wait for the audio generator to finish generating lines the first time
+    while not hypno_line_mapping:
+        time.sleep(0.1)
+
     # BACKGROUND AUDIO
     # ================
-    if config.play_background_audio:
-        background_player = RepeatingAudioPlayer(audio_filepath=Path("./import/audio/background/tone.wav"))
+    if config.background_audio:
+        background_player = RepeatingAudioPlayer(audio_filepath=BACKGROUND_AUDIO[config.background_audio])
         background_player_thread = threading.Thread(
             target=background_player.play_audio_file,
             kwargs={"chunk_size": config.background_chunk_size},

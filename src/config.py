@@ -1,9 +1,10 @@
 import argparse
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Self
+from typing import Self, cast
 
 from loguru import logger
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, Field, ValidationError, ValidationInfo, field_validator
 
 
 class Config(BaseModel):
@@ -17,9 +18,9 @@ class Config(BaseModel):
         default=Path("./import/audio/lines"),
         description="Directory where audio files for lines will be stored.",
     )
-    play_background_audio: bool = Field(
-        default=True,
-        description="Whether to play background audio.",
+    background_audio: str | None = Field(
+        default=None,
+        description="Type of background audio to play.",
     )
     background_chunk_size: int = Field(
         default=8000,
@@ -60,8 +61,34 @@ class Config(BaseModel):
         description="Delay in seconds after the lines start playing, before starting to play the mantra audio.",
     )
 
+    @field_validator("background_audio", mode="after")
     @classmethod
-    def from_args(cls, *, json_filepath: Path | None, text_filepath: Path | None) -> Self:
+    def validate_background_audio(cls, value: str | None, info: ValidationInfo) -> str | None:
+        """Validate the background audio type against available options.
+
+        Raises:
+            ValueError: If the provided background audio type is not valid.
+        """
+        if not value or value.lower().strip() == "none":
+            return None
+
+        if isinstance(info.context, dict):
+            available_backgrounds = cast("Iterable[str]", info.context.get("available_backgrounds", []))
+            if value not in available_backgrounds:
+                msg = f"Invalid background audio type: {value}. Available options: {', '.join(available_backgrounds)}"
+                raise ValueError(msg)
+            return value
+        msg = f"Invalid context for background audio validation: {info.context}"
+        raise ValueError(msg)
+
+    @classmethod
+    def from_args(
+        cls,
+        *,
+        json_filepath: Path | None,
+        text_filepath: Path | None,
+        available_backgrounds: Iterable[str],
+    ) -> Self:
         """Create a Config instance from a provided JSON file path and text file path.
 
         If settings are unavailable in the JSON file, default values will be used.
@@ -69,6 +96,7 @@ class Config(BaseModel):
         Args:
             json_filepath (Path | None): Path to the JSON configuration file.
             text_filepath (Path | None): Path to the text file containing lines.
+            available_backgrounds (Iterable[str]): Available background audio types for validation.
 
         Returns:
             Config: An instance of the Config class with settings loaded from the JSON file, using the provided text
@@ -77,7 +105,10 @@ class Config(BaseModel):
         if json_filepath and json_filepath.exists():
             try:
                 logger.debug(f"Loading configuration from {json_filepath}")
-                config = cls.model_validate_json(json_filepath.read_text())
+                config = cls.model_validate_json(
+                    json_filepath.read_text(),
+                    context={"available_backgrounds": available_backgrounds},
+                )
                 logger.debug(f"Configuration loaded: {config}")
             except ValidationError as e:
                 logger.warning(f"Validation error reading {json_filepath}: {e}. Using default settings.")
