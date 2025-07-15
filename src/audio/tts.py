@@ -1,21 +1,34 @@
 import multiprocessing
 import multiprocessing.synchronize
 import time
-from hashlib import sha256
+from collections.abc import MutableMapping
 from pathlib import Path
 
 from loguru import logger
 
 from src.audio.speech.speech import get_engine
-from src.shared import clean_line
+from src.hypno_line import HypnoLine, clean_line
+
+FILE_WRITE_WAIT = 2
+SLEEP_PERIOD = 10
+
+
+def _get_lines_from_file(text_filepath: Path) -> list[str]:
+    """Read lines from a text file, cleaning and deduplicating them."""
+    lines: list[str] = []
+
+    with text_filepath.open(encoding="utf-8") as file:
+        for raw_line in file:
+            if (line := clean_line(raw_line)) and line not in lines:
+                lines.append(line)
+    return lines
 
 
 def generate_audio(
     text_filepath: Path,
     output_audio_dir: Path,
-    exported_files: dict[str, Path],
-    exported_files_lock: multiprocessing.synchronize.Lock,
-    output_audio_file_extension: str = "wav",
+    hypno_line_mapping: MutableMapping[str, HypnoLine],
+    hypno_lines_lock: multiprocessing.synchronize.Lock,
 ) -> None:
     last_generation_time: float | None = None
     engine = get_engine()
@@ -32,44 +45,46 @@ def generate_audio(
             last_generation_time = last_save_time
 
             # The existing dictionary of files will be replaced with new files once ALL lines have been processed
-            new_exported_files: dict[str, Path] = {}
+            new_exported_files: dict[str, HypnoLine] = {}
 
-            with text_filepath.open(encoding="utf-8") as file:
-                lines = file.readlines()
+            lines = _get_lines_from_file(text_filepath)
 
             for line in lines:
-                line = clean_line(line)  # noqa: PLW2901
-                hashed_text = sha256(line.encode("utf-8")).hexdigest()
-                audio_filepath = output_audio_dir / f"{hashed_text}.{output_audio_file_extension}"
+                hypno_line = hypno_line_mapping.get(line) or HypnoLine(text=line, output_audio_dir=output_audio_dir)
 
-                if not audio_filepath.exists():
+                if not hypno_line.filepath.exists():
                     logger.debug(f"Generating audio for line: {line.strip()}")
-                    engine.save_to_file(line, str(audio_filepath))
+                    engine.save_to_file(line, str(hypno_line.filepath))
                     new_lines += 1
 
-                # All lines are logged and made available for playback, even if they are not generated
-                new_exported_files[line] = audio_filepath
+                new_exported_files[line] = hypno_line
 
             # Save all queued up audio files
             if new_lines:
                 logger.debug(f"Saving {new_lines} audio files to disk.")
                 engine.runAndWait()
+
+                # Wait until all audio files are confirmed to exist and are non-empty before updating exported_files
+                while not all(
+                    hypno_line.filepath.exists() and Path(hypno_line.filepath).stat().st_size > 0
+                    for hypno_line in new_exported_files.values()
+                ):
+                    logger.debug("Waiting for audio files to be fully written...")
+                    time.sleep(FILE_WRITE_WAIT)
             else:
                 logger.debug("No new audio files to save.")
 
-            # Wait until all audio files are confirmed to exist and are non-empty before updating exported_files
-            while not all(
-                audio_filepath.exists() and Path(audio_filepath).stat().st_size > 0
-                for audio_filepath in new_exported_files.values()
-            ):
-                logger.debug("Waiting for audio files to be fully written...")
-                time.sleep(1)
+            # Getting all duration values for the lines
+            for hypno_line in new_exported_files.values():
+                if not hypno_line.duration:
+                    hypno_line.set_duration()
 
             logger.debug("All audio files are now saved and non-empty.")
 
-            with exported_files_lock:
-                exported_files.clear()
-                exported_files.update(new_exported_files)
-            logger.debug(f"Available files is now {len(exported_files)}")
+            with hypno_lines_lock:
+                hypno_line_mapping.clear()
+                hypno_line_mapping.update(new_exported_files)
+            logger.debug(f"Available files is now {len(hypno_line_mapping)}")
         else:
-            time.sleep(5)
+            logger.debug("No changes detected, waiting before checking again.")
+            time.sleep(SLEEP_PERIOD)

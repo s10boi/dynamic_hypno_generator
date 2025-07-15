@@ -10,7 +10,7 @@ from src.audio.line_player import get_line_players
 from src.audio.repeating_player import RepeatingAudioPlayer
 from src.audio.tts import generate_audio
 from src.config import Config, read_args
-from src.filepath_queue import get_shuffled_filepaths, queue_filepaths
+from src.hypno_queue import get_shuffled_lines, queue_hypno_lines
 
 DEFAULT_CONFIG_PATH = Path("./import/settings/default.json")
 
@@ -32,17 +32,16 @@ def main() -> None:
 
     # Start generating audio files from the lines in the source text file
     manager = multiprocessing.Manager()
-    audio_filepaths = manager.dict()
-    audio_filepaths_lock = manager.Lock()
+    hypno_line_mapping = manager.dict()
+    hypno_lines_lock = manager.Lock()
 
     audio_generator_process = multiprocessing.Process(
         target=generate_audio,
         kwargs={
             "text_filepath": config.text_filepath,
             "output_audio_dir": config.line_dir,
-            "exported_files": audio_filepaths,
-            "exported_files_lock": audio_filepaths_lock,
-            "output_audio_file_extension": "wav",
+            "hypno_line_mapping": hypno_line_mapping,
+            "hypno_lines_lock": hypno_lines_lock,
         },
         daemon=True,
     )
@@ -65,12 +64,12 @@ def main() -> None:
     line_players = get_line_players(initial_pitch_shift=config.initial_pitch_shift, echoes=config.max_echoes)
 
     filepath_queue_thread = threading.Thread(
-        target=queue_filepaths,
+        target=queue_hypno_lines,
         kwargs={
-            "filepath_chooser": get_shuffled_filepaths,
+            "hypno_line_chooser": get_shuffled_lines,
             "line_players": line_players,
-            "audio_filepaths": audio_filepaths,
-            "audio_filepaths_lock": audio_filepaths_lock,
+            "hypno_line_mapping": hypno_line_mapping,
+            "hypno_lines_lock": hypno_lines_lock,
         },
         daemon=True,
     )

@@ -10,6 +10,8 @@ from pedalboard import (
 )
 from pedalboard.io import AudioFile, AudioStream
 
+from src.hypno_line import HypnoLine
+
 
 @final
 class LinePlayer:
@@ -30,7 +32,7 @@ class LinePlayer:
         """
         self.pedalboard = pedalboard
         self.initial_delay = initial_delay
-        self.queue = Queue[Path](maxsize=1)
+        self.queue = Queue[HypnoLine](maxsize=1)
         self.next_file_play_time = None
 
     def play_audio_files(self, chunk_size: int) -> None:
@@ -44,12 +46,12 @@ class LinePlayer:
             time.sleep(self.initial_delay)
 
             while True:
-                audio_filepath = self.queue.get()
+                hypno_line = self.queue.get()
                 # Only try to play the file if it is time to play it
                 if self.next_file_play_time:
                     while time.time() < self.next_file_play_time:
                         time.sleep(0.1)
-                self._play_file(audio_filepath=audio_filepath, stream=stream, chunk_size=chunk_size)
+                self._play_file(audio_filepath=hypno_line.filepath, stream=stream, chunk_size=chunk_size)
 
     def _play_file(self, *, audio_filepath: Path, stream: AudioStream, chunk_size: int) -> None:
         """Play a single audio file with the pedalboard effects."""
