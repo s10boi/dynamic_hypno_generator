@@ -27,7 +27,7 @@ class Config(BaseModel):
         description="Number of frames to read at a time for background audio.",
     )
     initial_line_delay: float = Field(
-        default=3.0,
+        default=10.0,
         ge=0.0,
         description="Initial delay in seconds before starting to play lines.",
     )
@@ -55,7 +55,7 @@ class Config(BaseModel):
         description="Whether to play the mantra audio.",
     )
     mantra_start_delay: float = Field(
-        default=10.0,
+        default=20.0,
         ge=0.0,
         description="Delay in seconds after the lines start playing, before starting to play the mantra audio.",
     )
@@ -78,10 +78,12 @@ class Config(BaseModel):
             try:
                 logger.debug(f"Loading configuration from {json_filepath}")
                 config = cls.model_validate_json(json_filepath.read_text())
+                logger.debug(f"Configuration loaded: {config}")
             except ValidationError as e:
-                print(f"Validation error reading {json_filepath}: {e}")
+                logger.warning(f"Validation error reading {json_filepath}: {e}. Using default settings.")
                 config = cls()
         else:
+            logger.warning(f"Configuration file {json_filepath} not found, using default settings.")
             config = cls()
 
         if text_filepath and text_filepath.exists():
@@ -105,5 +107,11 @@ def read_args() -> argparse.Namespace:
         type=Path,
         default=None,
         help="Path to the text file containing lines to be converted to audio.",
+    )
+    _ = parser.add_argument(
+        "-d",
+        "--debug",
+        action="store_true",
+        help="Enable debug logging.",
     )
     return parser.parse_args()

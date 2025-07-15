@@ -6,8 +6,9 @@ from pathlib import Path
 
 from loguru import logger
 
-from src.audio.speech.speech import get_engine
+from src.audio.speech import get_engine
 from src.hypno_line import HypnoLine, clean_line
+from src.log import configure_logger
 
 FILE_WRITE_WAIT = 2
 SLEEP_PERIOD = 10
@@ -25,11 +26,28 @@ def _get_lines_from_file(text_filepath: Path) -> list[str]:
 
 
 def generate_audio(
+    *,
     text_filepath: Path,
     output_audio_dir: Path,
     hypno_line_mapping: MutableMapping[str, HypnoLine],
     hypno_lines_lock: multiprocessing.synchronize.Lock,
+    debug: bool,
 ) -> None:
+    """Generates audio files for each line in the text file, and updates the available files mapping.
+
+    This function continuously checks the text file for changes, generates audio files for new lines and updates the
+    `hypno_line_mapping` with the new audio files. It uses a text-to-speech engine to generate the audio.
+
+    Args:
+        text_filepath (Path): The path to the text file containing lines to be converted to audio.
+        output_audio_dir (Path): The directory where the generated audio files will be saved.
+        hypno_line_mapping (MutableMapping[str, HypnoLine]): Mapping of lines to their corresponding HypnoLine objects.
+        hypno_lines_lock (multiprocessing.synchronize.Lock): A lock to synchronize access to the hypno_line_mapping.
+        debug (bool): Whether to enable debug logging.
+    """
+    # Because this function is run in a separate process, we need to configure the logger again
+    configure_logger(debug=debug)
+
     last_generation_time: float | None = None
     engine = get_engine()
 

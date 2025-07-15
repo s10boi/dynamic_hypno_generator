@@ -1,7 +1,8 @@
 from queue import Queue
-from typing import final
+from typing import Self, final
 
 import numpy as np
+from loguru import logger
 from pedalboard import (
     Delay,
     Gain,
@@ -11,6 +12,7 @@ from pedalboard import (
 )
 from pedalboard.io import AudioFile, AudioStream
 
+from src.config import Config
 from src.hypno_line import HypnoLine
 
 
@@ -55,46 +57,40 @@ class LinePlayer:
         print(f"Playing: {hypno_line.text}")
 
         with AudioFile(str(hypno_line.filepath), "r").resampled_to(stream.sample_rate) as audio_file:  # pyright: ignore[reportArgumentType, reportAttributeAccessIssue, reportUnknownVariableType]
-            audio_data = audio_file.read(audio_file.frames)  # pyright: ignore[reportUnknownVariableType]
+            try:
+                audio_data = audio_file.read(audio_file.frames)  # pyright: ignore[reportUnknownVariableType]
+            except ValueError as e:
+                logger.error(f"Error reading audio file {hypno_line.filepath}: {e}")
+            else:
+                # Add MAX_DELAY silence at the end (so that all delays can be heard)
+                audio_data = np.pad(  # pyright: ignore[reportUnknownVariableType]
+                    audio_data,  # pyright: ignore[reportUnknownArgumentType]
+                    [(0, 0), (0, int((max_delay) * audio_file.samplerate))],  # pyright: ignore[reportUnknownArgumentType]
+                )
 
-            # Add MAX_DELAY silence at the end (so that all delays can be heard)
-            audio_data = np.pad(  # pyright: ignore[reportUnknownVariableType]
-                audio_data,  # pyright: ignore[reportUnknownArgumentType]
-                [(0, 0), (0, int((max_delay) * audio_file.samplerate))],  # pyright: ignore[reportUnknownArgumentType]
-            )
+                # Chunk the audio data to avoid memory issues
+                for start in range(0, len(audio_data), chunk_size):  # pyright: ignore[reportUnknownArgumentType]
+                    end = min(start + chunk_size, len(audio_data))  # pyright: ignore[reportUnknownArgumentType]
+                    chunk = audio_data[start:end]  # pyright: ignore[reportUnknownVariableType]
+                    processed_chunk = self.pedalboard(chunk, audio_file.samplerate)  # pyright: ignore[reportUnknownArgumentType]
+                    stream.write(processed_chunk, stream.sample_rate)
 
-            # Chunk the audio data to avoid memory issues
-            for start in range(0, len(audio_data), chunk_size):  # pyright: ignore[reportUnknownArgumentType]
-                end = min(start + chunk_size, len(audio_data))  # pyright: ignore[reportUnknownArgumentType]
-                chunk = audio_data[start:end]  # pyright: ignore[reportUnknownVariableType]
-                processed_chunk = self.pedalboard(chunk, audio_file.samplerate)  # pyright: ignore[reportUnknownArgumentType]
-                stream.write(processed_chunk, stream.sample_rate)
+    @classmethod
+    def from_config(cls, config: Config) -> Self:
+        """Return a LinePlayer instance configured with audio effects for echoes based on the provided configuration."""
+        boards = [
+            # Main voice with a pitch shift
+            Pedalboard([PitchShift(semitones=config.initial_pitch_shift)]),
+        ]
 
+        # Add echoes with decreasing pitch shift and volume, and increasing delay
+        boards.extend(
+            Pedalboard([
+                PitchShift(semitones=config.initial_pitch_shift - (i * 0.5)),  # Decrease pitch for each echo
+                Gain(gain_db=-12 * i),  # Decrease volume for each echo
+                Delay(delay_seconds=i * config.echo_delay, mix=0.5),  # Increase delay for each echo
+            ])
+            for i in range(1, config.max_echoes + 1)
+        )
 
-def get_line_player(*, initial_pitch_shift: float, echoes: int, echo_delay: float) -> LinePlayer:
-    """Create a list of LinePlayers with different audio effects.
-
-    Args:
-        initial_pitch_shift (float): The initial pitch shift in semitones for the main voice.
-        echoes (int): The number of echoes to create, each with decreasing pitch shift and gain and increasing delay.
-        echo_delay (float): The delay in seconds between echoes.
-
-    Returns:
-        list[LinePlayer]: LinePlayers configured with the specified audio effects.
-    """
-    boards = [
-        # Main voice with a pitch shift
-        Pedalboard([PitchShift(semitones=initial_pitch_shift)]),
-    ]
-
-    #  Add echoes with decreasing pitch shift and volume, and increasing delay
-    boards.extend(
-        Pedalboard([
-            PitchShift(semitones=initial_pitch_shift - (i * 0.5)),  # Decrease pitch fore each echo
-            Gain(gain_db=-12 * i),  # Decrease volume for each echo
-            Delay(delay_seconds=i * echo_delay, mix=0.5),  # Increase delay for each echo
-        ])
-        for i in range(1, echoes + 1)
-    )
-
-    return LinePlayer(pedalboard=Pedalboard([Mix(boards)]))  # pyright: ignore[reportArgumentType]
+        return cls(pedalboard=Pedalboard([Mix(boards)]))  # pyright: ignore[reportArgumentType]

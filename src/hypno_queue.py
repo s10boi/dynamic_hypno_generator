@@ -22,7 +22,14 @@ def queue_hypno_lines(
     hypno_line_mapping: dict[str, HypnoLine],
     hypno_lines_lock: multiprocessing.synchronize.Lock,
 ) -> None:
-    """Queue HypnoLines from the generator to the line players."""
+    """Queue HypnoLines from the generator to the line players.
+
+    Args:
+        hypno_line_chooser (HypnoLineChooserFn): A function that returns an iterator of HypnoLine objects.
+        line_players (list[LinePlayer]): A list of LinePlayer instances to queue the HypnoLines to.
+        hypno_line_mapping (dict[str, HypnoLine]): A mapping of line identifiers to HypnoLine objects.
+        hypno_lines_lock (multiprocessing.synchronize.Lock): A lock to ensure thread-safe access to the hypno lines.
+    """
     hypno_line_iterator = hypno_line_chooser(hypno_line_mapping, hypno_lines_lock)
     current_player_index = 0
 
@@ -41,7 +48,6 @@ def queue_hypno_lines(
         while current_player.queue.full():
             time.sleep(0.1)
 
-        print(f"Queuing {hypno_line.text} to player {current_player_index}")
         current_player.queue.put(hypno_line)
 
         # Schedule the next assignment after this line's duration

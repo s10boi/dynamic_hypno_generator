@@ -1,37 +1,33 @@
 import multiprocessing
-import sys
 import threading
 import time
 from pathlib import Path
 
-from loguru import logger
-
-from src.audio.line_player import get_line_player
 from src.audio.repeating_player import RepeatingAudioPlayer
 from src.audio.tts import generate_audio
 from src.config import Config, read_args
-from src.hypno_queue import get_shuffled_lines, queue_hypno_lines
-from src.utils import wait_until_next_second
+from src.hypno_queue import LinePlayer, get_random_lines, queue_hypno_lines
+from src.log import configure_logger
 
 DEFAULT_CONFIG_PATH = Path("./import/settings/default.json")
 
 
 def main() -> None:
-    # Logging
-    logger.remove(0)
-    _ = logger.add(
-        sys.stderr,
-        level="DEBUG",
-    )
-
+    # SETUP
+    # =====
     # Get settings
     args = read_args()
+
+    configure_logger(debug=args.debug)
+
+    # Load configuration
     config = Config.from_args(
         json_filepath=args.config or DEFAULT_CONFIG_PATH,
         text_filepath=args.text_filepath,
     )
-    print(config)
 
+    # HYPNO LINE GENERATION
+    # =====================
     # Start generating audio files from the lines in the source text file
     manager = multiprocessing.Manager()
     hypno_line_mapping = manager.dict()
@@ -44,44 +40,38 @@ def main() -> None:
             "output_audio_dir": config.line_dir,
             "hypno_line_mapping": hypno_line_mapping,
             "hypno_lines_lock": hypno_lines_lock,
+            "debug": args.debug,
         },
         daemon=True,
     )
 
     audio_generator_process.start()
 
-    wait_until_next_second()
-
+    # BACKGROUND AUDIO
+    # ================
     if config.play_background_audio:
-        # Start playing the background tone/noise
         background_player = RepeatingAudioPlayer(audio_filepath=Path("./import/audio/background/tone.wav"))
         background_player_thread = threading.Thread(
             target=background_player.play_audio_file,
-            args=(config.background_chunk_size,),
+            kwargs={"chunk_size": config.background_chunk_size},
             daemon=True,
         )
         background_player_thread.start()
 
-        # Playback of main audio lines
-        time.sleep(config.initial_line_delay)  # Initial delay before starting the line players
+        # If there's a background audio file, delay before starting to play the hypno lines
+        time.sleep(config.initial_line_delay)
 
+    # HYPNO LINE PLAYBACK
+    # ===================
     line_players = [
-        get_line_player(
-            initial_pitch_shift=config.initial_pitch_shift,
-            echoes=config.max_echoes,
-            echo_delay=config.echo_delay,
-        ),
-        get_line_player(
-            initial_pitch_shift=config.initial_pitch_shift,
-            echoes=config.max_echoes,
-            echo_delay=config.echo_delay,
-        ),
+        LinePlayer.from_config(config),
+        LinePlayer.from_config(config),
     ]
 
     filepath_queue_thread = threading.Thread(
         target=queue_hypno_lines,
         kwargs={
-            "hypno_line_chooser": get_shuffled_lines,
+            "hypno_line_chooser": get_random_lines,
             "line_players": line_players,
             "hypno_line_mapping": hypno_line_mapping,
             "hypno_lines_lock": hypno_lines_lock,
@@ -100,6 +90,8 @@ def main() -> None:
         )
         line_player_thread.start()
 
+    # MANTRA PLAYBACK
+    # ================
     if config.play_mantra:
         time.sleep(config.mantra_start_delay)  # Delay before starting the mantra
 
