@@ -39,6 +39,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "loguru" },
+    { name = "numpy" },
     { name = "pedalboard", version = "0.9.17", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'win_amd64'" },
     { name = "pedalboard", version = "0.9.17", source = { git = "https://github.com/spotify/pedalboard#7762b80fbd072bd226065ea2e23201e80557c6a0" }, marker = "sys_platform == 'win_amd64'" },
     { name = "pydantic" },
@@ -54,6 +55,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "loguru", specifier = ">=0.7.3" },
+    { name = "numpy", specifier = ">=2.3.1" },
     { name = "pedalboard", marker = "sys_platform != 'win_amd64'", specifier = ">=0.9.17" },
     { name = "pedalboard", marker = "sys_platform == 'win_amd64'", git = "https://github.com/spotify/pedalboard" },
     { name = "pydantic", specifier = ">=2.11.7" },

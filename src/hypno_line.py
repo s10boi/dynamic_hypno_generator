@@ -1,5 +1,4 @@
 from hashlib import sha256
-from math import ceil
 from pathlib import Path
 from typing import final
 
@@ -11,7 +10,7 @@ from pedalboard.io import AudioFile
 class HypnoLine:
     text: str
     filepath: Path
-    duration: int | None
+    duration: float | None
 
     def __init__(self, text: str, output_audio_dir: Path) -> None:  # noqa: D107
         self.text = text
@@ -22,7 +21,7 @@ class HypnoLine:
         if self.filepath.exists():
             logger.debug(f"Setting duration for audio file: {self.text}")
             with AudioFile(str(self.filepath), "r") as audio_file:  # pyright: ignore[reportGeneralTypeIssues, reportArgumentType, reportUnknownVariableType]
-                self.duration = ceil(audio_file.duration)  # pyright: ignore[reportUnknownArgumentType]
+                self.duration = audio_file.duration + 1
                 logger.debug(f"Duration set to {self.duration} seconds for {self.text}")
         else:
             msg = f"Audio file {self.filepath} does not exist."
