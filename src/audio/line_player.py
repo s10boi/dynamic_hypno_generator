@@ -88,7 +88,7 @@ def get_line_players(*, initial_pitch_shift: float, echoes: int) -> list[LinePla
                 PitchShift(semitones=initial_pitch_shift - i * 0.5),  # Decrease pitch shift for each echo
                 Gain(gain_db=-12 * i),  # Decrease gain for each echo
             ]),
-            initial_delay=i * 1.5,  # Increase delay for each echo
+            initial_delay=i * 1,  # Increase delay for each echo
         )
         for i in range(1, echoes + 1)
     )

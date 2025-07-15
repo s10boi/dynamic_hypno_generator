@@ -11,6 +11,7 @@ from src.audio.repeating_player import RepeatingAudioPlayer
 from src.audio.tts import generate_audio
 from src.config import Config, read_args
 from src.hypno_queue import get_shuffled_lines, queue_hypno_lines
+from src.utils import wait_until_next_second
 
 DEFAULT_CONFIG_PATH = Path("./import/settings/default.json")
 
@@ -47,6 +48,8 @@ def main() -> None:
     )
 
     audio_generator_process.start()
+
+    wait_until_next_second()
 
     if config.play_background_audio:
         # Start playing the background tone/noise
