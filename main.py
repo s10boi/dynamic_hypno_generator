@@ -9,7 +9,7 @@ from src.config import Config, read_args
 from src.hypno_queue import LinePlayer, get_random_lines, queue_hypno_lines
 from src.log import configure_logger
 
-DEFAULT_CONFIG_PATH = Path("./import/settings/default.json")
+DEFAULT_CONFIG_PATH = Path("./config.json")
 
 
 def main() -> None:
