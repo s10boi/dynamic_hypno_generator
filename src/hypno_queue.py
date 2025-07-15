@@ -2,7 +2,7 @@ import multiprocessing
 import multiprocessing.synchronize
 import random
 import time
-from collections.abc import Callable, Iterable, Iterator, Mapping
+from collections.abc import Callable, Iterator, Mapping
 
 from src.audio.line_player import LinePlayer
 from src.hypno_line import HypnoLine
@@ -18,17 +18,39 @@ SLEEP_PERIOD = 1
 def queue_hypno_lines(
     *,
     hypno_line_chooser: HypnoLineChooserFn,
-    line_players: Iterable[LinePlayer],
+    line_players: list[LinePlayer],
     hypno_line_mapping: dict[str, HypnoLine],
     hypno_lines_lock: multiprocessing.synchronize.Lock,
 ) -> None:
-    """Queue audio filepaths from the generator to the line players, using a lock for safe access."""
-    for hypno_line in hypno_line_chooser(hypno_line_mapping, hypno_lines_lock):
-        print(f"Playing {hypno_line.text}")
-        for line_player in line_players:
-            while line_player.queue.full():
-                time.sleep(1)
-            line_player.queue.put(hypno_line)
+    """Queue HypnoLines from the generator to the line players."""
+    hypno_line_iterator = hypno_line_chooser(hypno_line_mapping, hypno_lines_lock)
+    current_player_index = 0
+
+    for hypno_line in hypno_line_iterator:
+        # Ensure the hypno line has duration set
+        if hypno_line.duration is None:
+            try:
+                hypno_line.set_duration()
+            except FileNotFoundError:
+                print(f"Audio file not ready for: {hypno_line.text}")
+                continue
+
+        current_player = line_players[current_player_index]
+
+        # Wait for the current player's queue to have space
+        while current_player.queue.full():
+            time.sleep(0.1)
+
+        print(f"Queuing {hypno_line.text} to player {current_player_index}")
+        current_player.queue.put(hypno_line)
+
+        # Schedule the next assignment after this line's duration
+        if hypno_line.duration:
+            # Move to next player in round-robin fashion
+            current_player_index = (current_player_index + 1) % len(line_players)
+
+            # Wait for the duration of the current audio before queuing the next one
+            time.sleep(hypno_line.duration)
 
 
 def get_sequential_lines(

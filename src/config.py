@@ -1,8 +1,8 @@
 import argparse
-import json
 from pathlib import Path
 from typing import Self
 
+from loguru import logger
 from pydantic import BaseModel, Field, ValidationError
 
 
@@ -40,6 +40,11 @@ class Config(BaseModel):
         ge=0,
         description="Maximum number of echoes to play for each line.",
     )
+    echo_delay: float = Field(
+        default=1.0,
+        ge=0.0,
+        description="Delay in seconds between echoes.",
+    )
     line_chunk_size: int = Field(
         default=96_000,
         gt=0,
@@ -71,11 +76,13 @@ class Config(BaseModel):
         """
         if json_filepath and json_filepath.exists():
             try:
-                config = cls.model_validate(json.loads(json_filepath.read_text()))
+                logger.debug(f"Loading configuration from {json_filepath}")
+                config = cls.model_validate_json(json_filepath.read_text())
             except ValidationError as e:
                 print(f"Validation error reading {json_filepath}: {e}")
                 config = cls()
-        config = cls()
+        else:
+            config = cls()
 
         if text_filepath and text_filepath.exists():
             config.text_filepath = text_filepath

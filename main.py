@@ -6,7 +6,7 @@ from pathlib import Path
 
 from loguru import logger
 
-from src.audio.line_player import get_line_players
+from src.audio.line_player import get_line_player
 from src.audio.repeating_player import RepeatingAudioPlayer
 from src.audio.tts import generate_audio
 from src.config import Config, read_args
@@ -30,6 +30,7 @@ def main() -> None:
         json_filepath=args.config or DEFAULT_CONFIG_PATH,
         text_filepath=args.text_filepath,
     )
+    print(config)
 
     # Start generating audio files from the lines in the source text file
     manager = multiprocessing.Manager()
@@ -64,7 +65,18 @@ def main() -> None:
         # Playback of main audio lines
         time.sleep(config.initial_line_delay)  # Initial delay before starting the line players
 
-    line_players = get_line_players(initial_pitch_shift=config.initial_pitch_shift, echoes=config.max_echoes)
+    line_players = [
+        get_line_player(
+            initial_pitch_shift=config.initial_pitch_shift,
+            echoes=config.max_echoes,
+            echo_delay=config.echo_delay,
+        ),
+        get_line_player(
+            initial_pitch_shift=config.initial_pitch_shift,
+            echoes=config.max_echoes,
+            echo_delay=config.echo_delay,
+        ),
+    ]
 
     filepath_queue_thread = threading.Thread(
         target=queue_hypno_lines,
@@ -79,7 +91,13 @@ def main() -> None:
     filepath_queue_thread.start()
 
     for line_player in line_players:
-        line_player_thread = threading.Thread(target=line_player.play_audio_files, args=(config.line_chunk_size,))
+        line_player_thread = threading.Thread(
+            target=line_player.play_audio_files,
+            kwargs={
+                "chunk_size": config.line_chunk_size,
+                "max_delay": config.max_echoes * config.echo_delay,
+            },
+        )
         line_player_thread.start()
 
     if config.play_mantra:
