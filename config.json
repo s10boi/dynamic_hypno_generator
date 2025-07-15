@@ -8,6 +8,6 @@
     "max_echoes": 2,
     "echo_delay": 1.5,
     "line_chunk_size": 96000,
-    "play_mantra": true,
+    "mantra_filepath": "./import/audio/mantras/mantra.mp3",
     "mantra_start_delay": 10.0
 }

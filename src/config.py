@@ -1,7 +1,7 @@
 import argparse
 from collections.abc import Iterable
 from pathlib import Path
-from typing import Self, cast
+from typing import Any, Self, cast
 
 from loguru import logger
 from pydantic import BaseModel, Field, ValidationError, ValidationInfo, field_validator
@@ -51,6 +51,10 @@ class Config(BaseModel):
         gt=0,
         description="Number of frames to read at a time for line audio.",
     )
+    mantra_filepath: Path | None = Field(
+        default=None,
+        description="Path to the mantra audio file. If None, no mantra will be played.",
+    )
     play_mantra: bool = Field(
         default=True,
         description="Whether to play the mantra audio.",
@@ -80,6 +84,17 @@ class Config(BaseModel):
             return value
         msg = f"Invalid context for background audio validation: {info.context}"
         raise ValueError(msg)
+
+    @field_validator("mantra_filepath", mode="before")
+    @classmethod
+    def validate_mantra_filepath(cls, value: Any) -> Any:  # noqa: ANN401
+        if isinstance(value, str):
+            value = value.strip()
+
+            if value.lower() == "none":
+                return None
+
+        return value
 
     @classmethod
     def from_args(
