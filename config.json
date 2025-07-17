@@ -1,10 +1,11 @@
 {
     "text_filepath": "./import/text/lines.txt",
     "background_audio": "tone",
-    "initial_line_delay": 10.0,
+    "line_chooser": "sequential",
+    "initial_line_delay": 15.0,
     "initial_pitch_shift": -1.44,
     "max_echoes": 2,
     "echo_delay": 1.5,
-    "mantra_filepath": "./import/audio/mantras/mantra.mp3",
-    "mantra_start_delay": 10.0
+    "mantra_filepath": "none",
+    "mantra_start_delay": 45.0
 }

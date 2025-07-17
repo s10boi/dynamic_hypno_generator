@@ -6,6 +6,8 @@ from typing import Any, Self, cast
 from loguru import logger
 from pydantic import BaseModel, Field, ValidationError, ValidationInfo, field_validator
 
+DEFAULT_LINE_CHOOSER = "sequential"
+
 
 class Config(BaseModel):
     """Configuration for controlling various settings for hypno generation."""
@@ -17,6 +19,10 @@ class Config(BaseModel):
     background_audio: str | None = Field(
         default=None,
         description="Type of background audio to play.",
+    )
+    line_chooser: str = Field(
+        default=DEFAULT_LINE_CHOOSER,
+        description="Function to choose hypno lines.",
     )
     initial_line_delay: float = Field(
         default=10.0,
@@ -67,6 +73,23 @@ class Config(BaseModel):
         msg = f"Invalid context for background audio validation: {info.context}"
         raise ValueError(msg)
 
+    @field_validator("line_chooser", mode="after")
+    @classmethod
+    def validate_line_chooser_fn(cls, value: str, info: ValidationInfo) -> str:
+        """Validate the line chooser function against available options.
+
+        Raises:
+            ValueError: If the provided line chooser function is not valid.
+        """
+        if isinstance(info.context, dict):
+            available_line_choosers = cast("Iterable[str]", info.context.get("available_line_choosers", []))
+            if value not in available_line_choosers:
+                msg = f"Invalid line chooser function: {value}. Available options: {', '.join(available_line_choosers)}"
+                raise ValueError(msg)
+            return value
+        msg = f"Invalid context for line chooser function validation: {info.context}"
+        raise ValueError(msg)
+
     @field_validator("mantra_filepath", mode="before")
     @classmethod
     def validate_mantra_filepath(cls, value: Any) -> Any:  # noqa: ANN401
@@ -85,6 +108,7 @@ class Config(BaseModel):
         json_filepath: Path | None,
         text_filepath: Path | None,
         available_backgrounds: Iterable[str],
+        available_line_choosers: Iterable[str],
     ) -> Self:
         """Create a Config instance from a provided JSON file path and text file path.
 
@@ -94,6 +118,7 @@ class Config(BaseModel):
             json_filepath (Path | None): Path to the JSON configuration file.
             text_filepath (Path | None): Path to the text file containing lines.
             available_backgrounds (Iterable[str]): Available background audio types for validation.
+            available_line_choosers (Iterable[str]): Available line chooser functions for validation.
 
         Returns:
             Config: An instance of the Config class with settings loaded from the JSON file, using the provided text
@@ -104,7 +129,10 @@ class Config(BaseModel):
                 logger.debug(f"Loading configuration from {json_filepath}")
                 config = cls.model_validate_json(
                     json_filepath.read_text(),
-                    context={"available_backgrounds": available_backgrounds},
+                    context={
+                        "available_backgrounds": available_backgrounds,
+                        "available_line_choosers": available_line_choosers,
+                    },
                 )
                 logger.debug(f"Configuration loaded: {config}")
             except ValidationError as e:

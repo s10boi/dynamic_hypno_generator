@@ -167,3 +167,4 @@ import/audio/mantras/*
 !import/audio/mantras/.gitkeep
 import/text/*
 !import/text/.gitkeep
+testing.json

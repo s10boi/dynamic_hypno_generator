@@ -6,17 +6,33 @@ from pathlib import Path
 from src.audio.repeating_player import RepeatingAudioPlayer
 from src.audio.tts import generate_audio
 from src.config import Config, read_args
-from src.hypno_queue import LinePlayer, get_random_lines, queue_hypno_lines
+from src.hypno_queue import (
+    HypnoLineChooserFn,
+    LinePlayer,
+    get_random_lines,
+    get_sequential_lines,
+    get_sequential_refreshing_lines,
+    get_shuffled_lines,
+    queue_hypno_lines,
+)
 from src.log import configure_logger
 
 DEFAULT_CONFIG_PATH = Path("./config.json")
+BACKGROUND_CHUNK_SIZE = 8000
+LINE_CHUNK_SIZE = 96_000
+LINE_DIR = Path("./import/audio/lines")
+
 BACKGROUND_AUDIO: dict[str, Path] = {
     "tone": Path("./import/audio/background/tone.wav"),
     "noise": Path("./import/audio/background/noise.wav"),
 }
-BACKGROUND_CHUNK_SIZE = 8000
-LINE_CHUNK_SIZE = 96_000
-LINE_DIR = Path("./import/audio/lines")
+
+LINE_CHOOSERS: dict[str, HypnoLineChooserFn] = {
+    "sequential": get_sequential_lines,
+    "sequential_refreshing": get_sequential_refreshing_lines,
+    "shuffled": get_shuffled_lines,
+    "random": get_random_lines,
+}
 
 
 def main() -> None:
@@ -32,6 +48,7 @@ def main() -> None:
         json_filepath=args.config or DEFAULT_CONFIG_PATH,
         text_filepath=args.text_filepath,
         available_backgrounds=BACKGROUND_AUDIO.keys(),
+        available_line_choosers=LINE_CHOOSERS.keys(),
     )
 
     # HYPNO LINE GENERATION
@@ -48,6 +65,7 @@ def main() -> None:
             "output_audio_dir": LINE_DIR,
             "hypno_line_mapping": hypno_line_mapping,
             "hypno_lines_lock": hypno_lines_lock,
+            # needed because the audio generator process is a separate process, so the logger needs to be set up again
             "debug": args.debug,
         },
         daemon=True,
