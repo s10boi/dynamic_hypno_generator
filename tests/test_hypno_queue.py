@@ -138,7 +138,7 @@ def test_get_shuffled_lines_single(lock: multiprocessing.synchronize.Lock) -> No
 
     line_generator = get_shuffled_lines(hypno_line_mapping=mapping, hypno_lines_lock=lock)  # pyright: ignore[reportUnknownArgumentType]
 
-    # Checking that the same HypnoLine instance is returned
+    # Checking that the same HypnoLine instance is returned even though it's a repeat (as it's the only one)
     assert next(line_generator) == hypno_line
     assert next(line_generator) == hypno_line
 
@@ -155,7 +155,7 @@ def test_get_shuffled_lines_no_repeat_line(lock: multiprocessing.synchronize.Loc
     line_generator = get_shuffled_lines(hypno_line_mapping=mapping, hypno_lines_lock=lock)  # pyright: ignore[reportUnknownArgumentType]
 
     # Checking that the generator never returns the same HypnoLine twice in a row
-    for _ in range(10):  # Check multiple iterations
+    for _ in range(1000):  # Check multiple iterations
         initial_line = next(line_generator)
         assert next(line_generator) != initial_line
 
@@ -171,7 +171,7 @@ def test_get_random_lines_single(lock: multiprocessing.synchronize.Lock) -> None
 
     line_generator = get_random_lines(hypno_line_mapping=mapping, hypno_lines_lock=lock)  # pyright: ignore[reportUnknownArgumentType]
 
-    # Checking that the same HypnoLine instance is returned
+    # Checking that the same HypnoLine instance is returned even though it's a repeat (as it's the only one)
     assert next(line_generator) == hypno_line
     assert next(line_generator) == hypno_line
 
@@ -188,6 +188,6 @@ def test_get_random_lines_multiple(lock: multiprocessing.synchronize.Lock) -> No
     line_generator = get_random_lines(hypno_line_mapping=mapping, hypno_lines_lock=lock)  # pyright: ignore[reportUnknownArgumentType]
 
     # Checking that the generator never returns the same HypnoLine twice in a row
-    for _ in range(10):  # Check multiple iterations
+    for _ in range(1000):  # Check multiple iterations
         initial_line = next(line_generator)
         assert next(line_generator) != initial_line
