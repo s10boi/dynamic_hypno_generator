@@ -56,7 +56,7 @@ dev = [
 requires-dist = [
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "numpy", specifier = ">=2.3.1" },
-    { name = "pedalboard", marker = "sys_platform != 'win_amd64'", specifier = ">=0.9.17" },
+    { name = "pedalboard", marker = "sys_platform != 'win_amd64'" },
     { name = "pedalboard", marker = "sys_platform == 'win_amd64'", git = "https://github.com/spotify/pedalboard" },
     { name = "pydantic", specifier = ">=2.11.7" },
     { name = "pyttsx3", specifier = ">=2.99" },

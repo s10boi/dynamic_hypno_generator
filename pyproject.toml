@@ -7,7 +7,7 @@ requires-python = ">=3.13"
 dependencies = [
     "loguru>=0.7.3",
     "numpy>=2.3.1",
-    "pedalboard>=0.9.17",
+    "pedalboard",
     "pydantic>=2.11.7",
     "pyttsx3>=2.99",
 ]
