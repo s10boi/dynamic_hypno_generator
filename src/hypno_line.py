@@ -1,6 +1,6 @@
 from hashlib import sha256
 from pathlib import Path
-from typing import final
+from typing import final, override
 
 from loguru import logger
 from pedalboard.io import AudioFile
@@ -8,6 +8,14 @@ from pedalboard.io import AudioFile
 
 @final
 class HypnoLine:
+    """Represents a line of hypnotic text and its associated audio file.
+
+    Attributes:
+        text (str): The text of the line.
+        filepath (Path): The file path to the audio file generated from this line.
+        duration (float | None): The duration of the audio file in seconds, if known.
+    """
+
     text: str
     filepath: Path
     duration: float | None
@@ -17,7 +25,22 @@ class HypnoLine:
         self.filepath = get_filepath_from_line(text, output_audio_dir)
         self.duration = None
 
+    @override
+    def __eq__(self, value: object) -> bool:
+        if isinstance(value, HypnoLine):
+            return self.text == value.text
+        return False
+
+    @override
+    def __hash__(self) -> int:
+        return hash(self.text)
+
     def set_duration(self) -> None:
+        """Sets the duration of the audio file associated with this HypnoLine.
+
+        Raises:
+            FileNotFoundError: If the audio file does not exist.
+        """
         if self.filepath.exists():
             logger.debug(f"Setting duration for audio file: {self.text}")
             with AudioFile(str(self.filepath), "r") as audio_file:  # pyright: ignore[reportGeneralTypeIssues, reportArgumentType, reportUnknownVariableType]
