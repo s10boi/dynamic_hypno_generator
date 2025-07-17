@@ -156,9 +156,8 @@ def get_shuffled_lines(
             # There's a chance that the last hypno from the previous iteration is the same as the current one,
             # so we skip yielding it to avoid duplicates in quick succession.
             if (len(hypno_lines) > 1 and hypno_line != last_hypno_line) or len(hypno_lines) == 1:
+                last_hypno_line = hypno_line
                 yield hypno_line
-
-            last_hypno_line = hypno_line
 
 
 def get_random_lines(

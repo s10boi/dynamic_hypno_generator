@@ -1,6 +1,6 @@
 from hashlib import sha256
 from pathlib import Path
-from typing import final, override
+from typing import Self, final, override
 
 from loguru import logger
 from pedalboard.io import AudioFile
@@ -20,10 +20,14 @@ class HypnoLine:
     filepath: Path
     duration: float | None
 
-    def __init__(self, text: str, output_audio_dir: Path) -> None:  # noqa: D107
+    def __init__(self, text: str, filepath: Path, duration: float | None = None) -> None:  # noqa: D107
         self.text = text
-        self.filepath = get_filepath_from_line(text, output_audio_dir)
-        self.duration = None
+        self.filepath = filepath
+        self.duration = duration
+
+    @classmethod
+    def from_text(cls, text: str, output_audio_dir: Path) -> Self:
+        return cls(text=text, filepath=get_filepath_from_line(text, output_audio_dir))
 
     @override
     def __eq__(self, value: object) -> bool:

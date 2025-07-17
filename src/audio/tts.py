@@ -68,7 +68,10 @@ def generate_audio(
             lines = _get_lines_from_file(text_filepath)
 
             for line in lines:
-                hypno_line = hypno_line_mapping.get(line) or HypnoLine(text=line, output_audio_dir=output_audio_dir)
+                hypno_line = hypno_line_mapping.get(line) or HypnoLine.from_text(
+                    text=line,
+                    output_audio_dir=output_audio_dir,
+                )
 
                 if not hypno_line.filepath.exists():
                     logger.debug(f"Generating audio for line: {line.strip()}")
