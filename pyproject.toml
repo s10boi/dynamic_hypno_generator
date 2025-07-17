@@ -19,4 +19,4 @@ dev-dependencies = [
 ]
 
 [tool.uv.sources]
-pedalboard = { git = "https://github.com/spotify/pedalboard", marker = "sys_platform == 'win_amd64'" }
+pedalboard = { git = "https://github.com/spotify/pedalboard", marker = "platform_system == 'Windows'" }
