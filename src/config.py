@@ -6,6 +6,7 @@ from typing import Any, Self, cast
 from loguru import logger
 from pydantic import BaseModel, Field, ValidationError, ValidationInfo, field_validator
 
+DEFAULT_BACKGROUND_AUDIO = "tone"
 DEFAULT_LINE_CHOOSER = "sequential"
 
 
@@ -17,7 +18,7 @@ class Config(BaseModel):
         description="Path to the text file containing lines.",
     )
     background_audio: str | None = Field(
-        default=None,
+        default=DEFAULT_BACKGROUND_AUDIO,
         description="Type of background audio to play.",
     )
     line_chooser: str = Field(
@@ -25,7 +26,7 @@ class Config(BaseModel):
         description="Function to choose hypno lines.",
     )
     initial_line_delay: float = Field(
-        default=10.0,
+        default=15.0,
         ge=0.0,
         description="Initial delay in seconds before starting to play lines.",
     )
@@ -36,10 +37,11 @@ class Config(BaseModel):
     max_echoes: int = Field(
         default=2,
         ge=0,
+        le=3,
         description="Maximum number of echoes to play for each line.",
     )
     echo_delay: float = Field(
-        default=1.0,
+        default=1.5,
         ge=0.0,
         description="Delay in seconds between echoes.",
     )
@@ -48,7 +50,7 @@ class Config(BaseModel):
         description="Path to the mantra audio file. If None, no mantra will be played.",
     )
     mantra_start_delay: float = Field(
-        default=20.0,
+        default=45.0,
         ge=0.0,
         description="Delay in seconds after the lines start playing, before starting to play the mantra audio.",
     )
