@@ -5,6 +5,7 @@ A project that dynamically generates repeating hypnosis audio, complete with sou
 - **Automatic Text-to-Speech**: Converts text lines from a file into audio.
 - **Dynamic Audio Generation**: Combines multiple audio layers, including background tones and echo effects.
 - **Live Updating Audio**: Updating the source text file changes the lines in the generated audio without needing to restart the application.
+- **Display Current Line**: The program prints the currently playing line to the terminal, allowing you or others to see what the user is currently hearing.
 
 ## ✅ Requirements
 - [Python 3.13](https://www.python.org/downloads/release/python-313/) or higher.
@@ -15,7 +16,7 @@ A project that dynamically generates repeating hypnosis audio, complete with sou
 ## 🔧 Installation
 I strongly recommend using [uv](https://docs.astral.sh/uv/), which will simplify installing Python if you don't have it, as well as setting up dependencies and running the program, though you can also use `pip` if you prefer.
 
-⚠️ I've had numerous issues trying to install pedalboard on Windows using `pip`, so I especially recommend using `uv` if you're on Windows.
+⚠️ I've had numerous issues trying to install pedalboard (used for audio effects) on Windows using `pip`, so I especially recommend using `uv` if you're on Windows.
 
 ⚠️ If you're on Windows, ensure you've installed the "Desktop development with C++" workload from [Build Tools for Visual Studio](https://visualstudio.microsoft.com/visual-cpp-build-tools/) as mentioned in the requirements.
 
@@ -160,7 +161,7 @@ flowchart LR
     A[External Input Program] --> B[Text File]
 
     subgraph "Hypnosis Audio Generator"
-        B --> C[Main Program]
+        B --> C[This Program]
         C --> D[stdout]
     end
 
@@ -176,3 +177,4 @@ This project is still early in development, so there may be bugs and issues.
 Currently I'm aware of:
 - Choppy audio playback while new text to speech audio is being generated.
 - Occasional issues where an audio line fails to play, but the rest of the audio continues playing, and the next line plays as expected.
+- Difficulties installing the `pedalboard` library on Windows using `pip`, which is used for audio effects. I recommend using `uv` to install and run the program on Windows instead.
