@@ -1,13 +1,10 @@
 {
     "text_filepath": "./import/text/lines.txt",
-    "line_dir": "./import/audio/lines",
     "background_audio": "tone",
-    "background_chunk_size": 8000,
     "initial_line_delay": 10.0,
     "initial_pitch_shift": -1.44,
     "max_echoes": 2,
     "echo_delay": 1.5,
-    "line_chunk_size": 96000,
     "mantra_filepath": "./import/audio/mantras/mantra.mp3",
     "mantra_start_delay": 10.0
 }

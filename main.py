@@ -10,11 +10,13 @@ from src.hypno_queue import LinePlayer, get_random_lines, queue_hypno_lines
 from src.log import configure_logger
 
 DEFAULT_CONFIG_PATH = Path("./config.json")
-
 BACKGROUND_AUDIO: dict[str, Path] = {
     "tone": Path("./import/audio/background/tone.wav"),
     "noise": Path("./import/audio/background/noise.wav"),
 }
+BACKGROUND_CHUNK_SIZE = 8000
+LINE_CHUNK_SIZE = 96_000
+LINE_DIR = Path("./import/audio/lines")
 
 
 def main() -> None:
@@ -43,7 +45,7 @@ def main() -> None:
         target=generate_audio,
         kwargs={
             "text_filepath": config.text_filepath,
-            "output_audio_dir": config.line_dir,
+            "output_audio_dir": LINE_DIR,
             "hypno_line_mapping": hypno_line_mapping,
             "hypno_lines_lock": hypno_lines_lock,
             "debug": args.debug,
@@ -63,7 +65,7 @@ def main() -> None:
         background_player = RepeatingAudioPlayer(audio_filepath=BACKGROUND_AUDIO[config.background_audio])
         background_player_thread = threading.Thread(
             target=background_player.play_audio_file,
-            kwargs={"chunk_size": config.background_chunk_size},
+            kwargs={"chunk_size": BACKGROUND_CHUNK_SIZE},
             daemon=True,
         )
         background_player_thread.start()
@@ -73,6 +75,8 @@ def main() -> None:
 
     # HYPNO LINE PLAYBACK
     # ===================
+    # Two line players are needed - one starting just after the first line is played, but while it's still playing the
+    # echoes
     line_players = [
         LinePlayer.from_config(config),
         LinePlayer.from_config(config),
@@ -94,7 +98,7 @@ def main() -> None:
         line_player_thread = threading.Thread(
             target=line_player.play_audio_files,
             kwargs={
-                "chunk_size": config.line_chunk_size,
+                "chunk_size": LINE_CHUNK_SIZE,
                 "max_delay": config.max_echoes * config.echo_delay,
             },
         )
@@ -103,12 +107,12 @@ def main() -> None:
     # MANTRA PLAYBACK
     # ================
     if config.mantra_filepath:
-        time.sleep(config.mantra_start_delay)  # Delay before starting the mantra
+        time.sleep(config.mantra_start_delay)
 
         mantra_player = RepeatingAudioPlayer(audio_filepath=config.mantra_filepath)
         mantra_player_thread = threading.Thread(
             target=mantra_player.play_audio_file,
-            args=(config.background_chunk_size,),
+            kwargs={"chunk_size": BACKGROUND_CHUNK_SIZE},
             daemon=True,
         )
         mantra_player_thread.start()

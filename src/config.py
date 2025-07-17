@@ -14,18 +14,9 @@ class Config(BaseModel):
         default=Path("./import/text/lines.txt"),
         description="Path to the text file containing lines.",
     )
-    line_dir: Path = Field(
-        default=Path("./import/audio/lines"),
-        description="Directory where audio files for lines will be stored.",
-    )
     background_audio: str | None = Field(
         default=None,
         description="Type of background audio to play.",
-    )
-    background_chunk_size: int = Field(
-        default=8000,
-        gt=0,
-        description="Number of frames to read at a time for background audio.",
     )
     initial_line_delay: float = Field(
         default=10.0,
@@ -46,18 +37,9 @@ class Config(BaseModel):
         ge=0.0,
         description="Delay in seconds between echoes.",
     )
-    line_chunk_size: int = Field(
-        default=96_000,
-        gt=0,
-        description="Number of frames to read at a time for line audio.",
-    )
     mantra_filepath: Path | None = Field(
         default=None,
         description="Path to the mantra audio file. If None, no mantra will be played.",
-    )
-    play_mantra: bool = Field(
-        default=True,
-        description="Whether to play the mantra audio.",
     )
     mantra_start_delay: float = Field(
         default=20.0,
