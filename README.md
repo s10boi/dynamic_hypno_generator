@@ -122,7 +122,7 @@ You can provide the following arguments when running the program with `uv`:
 
 For example, to run the program with a different text file and config file, you would use:
 ```bash
-uv run main.py -t ./path/to/your/text.txt -c ./path/to/your/config.json
+uv run main.py -t /path/to/your/text.txt -c /path/to/your/config.json
 ```
 
 ### Using `pip`
@@ -146,7 +146,7 @@ uv run main.py -t ./path/to/your/text.txt -c ./path/to/your/config.json
 #### Providing Arguments
 You can provide the same arguments as with `uv` when running the program with `pip`. For example, after activating your virtual environment, you would run:
 ```bash
-python3 main.py -t ./path/to/your/text.txt -c ./path/to/your/config.json
+python3 main.py -t /path/to/your/text.txt -c /path/to/your/config.json
 ```
 
 ## 🤖 Advanced Usage
