@@ -1,7 +1,11 @@
 import multiprocessing
+import sys
 import threading
 import time
 from pathlib import Path
+
+from loguru import logger
+from pydantic import ValidationError
 
 from src.audio.repeating_player import RepeatingAudioPlayer
 from src.audio.tts import generate_audio
@@ -48,15 +52,25 @@ def main() -> None:
     configure_logger(debug=args.debug)
 
     # Load configuration
-    config = Config.from_args(
-        json_filepath=args.config_filepath,
-        available_backgrounds=BACKGROUND_AUDIO.keys(),
-        available_line_choosers=LINE_CHOOSERS.keys(),
-    )
+    try:
+        config = Config.from_args(
+            json_filepath=args.config_filepath,
+            available_backgrounds=BACKGROUND_AUDIO.keys(),
+            available_line_choosers=LINE_CHOOSERS.keys(),
+        )
+    except (FileNotFoundError, ValidationError) as e:
+        logger.critical(
+            f"Failed to load configuration: {e}. Please check the configuration file at {args.config_filepath}.",
+        )
+        sys.exit(1)
 
     # HYPNO LINE GENERATION
     # =====================
     # Start generating audio files from the lines in the source text file
+    if not args.text_filepath.exists():
+        logger.critical(f"Text file {args.text_filepath} not found. Please ensure it exists.")
+        sys.exit(1)
+
     manager = multiprocessing.Manager()
     hypno_line_mapping = manager.dict()
     hypno_lines_lock = manager.Lock()

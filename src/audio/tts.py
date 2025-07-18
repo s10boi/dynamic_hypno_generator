@@ -11,7 +11,7 @@ from src.hypno_line import HypnoLine, clean_line
 from src.log import configure_logger
 
 FILE_WRITE_WAIT = 2
-SLEEP_PERIOD = 10
+SLEEP_PERIOD = 5
 
 
 def _get_lines_from_file(text_filepath: Path) -> list[str]:

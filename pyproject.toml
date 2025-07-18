@@ -1,7 +1,10 @@
 [project]
 name = "dynamic-hypno-generator"
 version = "0.1.0"
-description = "Dynamically generate repeating hypnosis audio"
+description = "A program that dynamically generates repeating hypnosis audio, complete with sound effects and multi-layered audio, using text-to-speech."
+authors = [
+  {name = "s10boi"},
+]
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [

@@ -1,19 +1,30 @@
-# 🌀 Dynamic Hypnosis Audio Generator
-A project that dynamically generates repeating hypnosis audio, complete with sound effects and multi-layered audio, using text-to-speech.
+# Dynamic Hypnosis Audio Generator
+🔞 **This program is only intended for use by those aged 18+**
 
-## 🎧 Features
+A program that dynamically generates repeating hypnosis audio, complete with sound effects and multi-layered audio, using text-to-speech.
+
+## Features
 - **Automatic Text-to-Speech**: Converts text lines from a file into audio.
 - **Dynamic Audio Generation**: Combines multiple audio layers, including background tones and echo effects.
 - **Live Updating Audio**: Updating the source text file changes the lines in the generated audio without needing to restart the application.
 - **Display Current Line**: The program prints the currently playing line to the terminal, allowing you or others to see what the user is currently hearing.
 
-## ✅ Requirements
+## Table of Contents
+1. [Requirements](#requirements)
+2. [Installation](#installation)
+3. [Setting up a Hypno Scene](#setting-up-a-hypno-scene)
+4. [Running the Program](#running-the-program)
+5. [Notes to Be Aware Of](#notes-to-be-aware-of)
+6. [Advanced Usage](#advanced-usage)
+7. [Known Issues](#known-issues)
+
+## Requirements
 - [Python 3.13](https://www.python.org/downloads/release/python-313/) or higher.
-- **Optional**: [uv](https://docs.astral.sh/uv/) - to simplify dependency management and running the program, or [pip](https://pip.pypa.io/en/stable/) if you prefer (see installation notes below).
+- **Optional**: [uv](https://docs.astral.sh/uv/) - to simplify dependency management and running the program, or pip if you prefer (see [installation notes](#installation) below).
 - **Windows Only**: [Build Tools for Visual Studio](https://visualstudio.microsoft.com/visual-cpp-build-tools/). You will need the "Desktop development with C++" workload. This is required to install pedalboard, which is used for audio effects.
 - Pretty decent system resources - unsure of exact requirements, but it can be resource-intensive to generate audio and apply the effects in real-time.
 
-## 🔧 Installation
+## Installation
 I strongly recommend using [uv](https://docs.astral.sh/uv/), which will simplify installing Python if you don't have it, as well as setting up dependencies and running the program, though you can also use `pip` if you prefer.
 
 ⚠️ I've had numerous issues trying to install pedalboard (used for audio effects) on Windows using `pip`, so I especially recommend using `uv` if you're on Windows.
@@ -68,9 +79,9 @@ To install a new voice:
 4. You may need to restart your computer for the new voice to be available, then follow the steps above to select it as your default voice.
 
 #### Linux
-I have not tested this on Linux, but the text to speech functionality uses espeak, which should be available on most distributions. You can install it using your package manager, e.g., `sudo apt install espeak` on Debian-based systems.
+I have not tested this on Linux, but the text to speech functionality uses espeak, which should be available on most distributions. You can install it using your package manager (e.g., `sudo apt install espeak` on Debian-based systems).
 
-## 🎛️ Setting up a Hypno Scene
+## Setting up a Hypno Scene
 When running the program, it checks for and uses the following:
 - **Text File**: The hypnosis lines to be read.
 - **Config File**: Settings for the audio generation, such as background sound, echo effects and delay.
@@ -81,7 +92,7 @@ The text file should contain the hypnosis lines you want to be read. By default 
 
 Also note that the program will automatically update the audio if you change the text file while it is running, so you can edit the lines in real-time.
 
-You can specify a different text file by passing the `-t <text_filepath>` argument when running the program.
+You can specify a different text file by passing the `-t <text_filepath>` argument when running the program. See the [Running the Program](#running-the-program) section for details on how to do this.
 
 ### Config File
 The config file is a JSON file that contains various settings for the audio generation. By default, it is located in `config.json` in the project root, and contains all the default settings. The following options are available:
@@ -100,11 +111,11 @@ The config file is a JSON file that contains various settings for the audio gene
 ### Mantra File
 The mantra file is an audio file that can be played repeatedly in the background while the hypnosis lines are being read. It typically consists of a few repeating words that fade in and out. It starts playing after the background tone and main hypnosis lines have started playing, and continues to play until the program is stopped.
 
-A basic eample is included, and I've made some sample files available in my [Google Drive](https://drive.google.com/drive/folders/1Uv9Og_GMYDpb2TKv_IzRYOutmHBePzaW?usp=sharing) for use with this program.
+A basic example is included in `./import/mantras`, and I've made some sample files available in my [Google Drive](https://drive.google.com/drive/folders/1Uv9Og_GMYDpb2TKv_IzRYOutmHBePzaW?usp=sharing) for use with this program.
 
 Make sure to set the `mantra_filepath` in the config file to the path of the mantra audio file you want to use, or set it to `none` if you don't want to use a mantra.
 
-## 🚀 Running the Program
+## Running the Program
 As with installation, I recommend using [uv](https://docs.astral.sh/uv/) to run the program, but you can also use `pip` if you prefer.
 
 ### Using `uv`
@@ -149,7 +160,12 @@ You can provide the same arguments as with `uv` when running the program with `p
 python3 main.py -t /path/to/your/text.txt -c /path/to/your/config.json
 ```
 
-## 🤖 Advanced Usage
+## Notes to Be Aware Of
+- When you first start the program, it will take a few seconds to generate the initial audio **before** any audio is played (if those lines of audio have not previously been generated before).
+- The source text file is only checked for changes every 5 seconds, so if you change the text file, it may take a few seconds before the changes are reflected in the audio.
+- When you change the text file, the program will continue playing the **current** lines until all of the new audio files from new lines from the file have been generated, regardless of which `line_chooser` option you have selected in the config file.
+
+## Advanced Usage
 ### Linking to Other Programs
 Since this program monitors an input text file, you could have an external program or device modifying that text file to change the hypnosis lines in real time based on user inputs or a chat bot etc.
 
@@ -170,10 +186,12 @@ flowchart LR
 ### Debugging
 Run the program with the `-d` flag to enable debug logging.
 
-## ⚠️ Known Issues
+## Known Issues
 This project is still early in development, so there may be bugs and issues.
 
 Currently I'm aware of:
 - Choppy audio playback while new text to speech audio is being generated.
 - Occasional issues where an audio line fails to play, but the rest of the audio continues playing, and the next line plays as expected.
 - Difficulties installing the `pedalboard` library on Windows using `pip`, which is used for audio effects. I recommend using `uv` to install and run the program on Windows instead.
+
+Further issues can be reported on the [GitHub Issues page](https://github.com/s10boi/dynamic_hypno_generator/issues)

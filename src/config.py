@@ -118,14 +118,17 @@ class Config(BaseModel):
             available_line_choosers (Iterable[str]): Available line chooser functions for validation.
 
         Returns:
-            Config: An instance of the Config class with settings loaded from the JSON file, using the provided text
-            file path if available.
+            Config: An instance of the Config class with settings loaded from the JSON file.
+
+        Raises:
+            FileNotFoundError: If the JSON configuration file does not exist.
+            ValidationError: If the JSON file does not conform to the expected schema.
         """
         if json_filepath.exists():
             try:
                 logger.debug(f"Loading configuration from {json_filepath}")
                 config = cls.model_validate_json(
-                    json_filepath.read_text(),
+                    json_filepath.read_text(encoding="utf-8"),
                     context={
                         "available_backgrounds": available_backgrounds,
                         "available_line_choosers": available_line_choosers,
@@ -133,11 +136,14 @@ class Config(BaseModel):
                 )
                 logger.debug(f"Configuration loaded: {config}")
             except ValidationError as e:
-                logger.warning(f"Validation error reading {json_filepath}: {e}. Using default settings.")
-                config = cls()
+                raise ValidationError(
+                    e.errors(),
+                    cls,
+                    json_filepath,
+                ) from e
         else:
-            logger.warning(f"Configuration file {json_filepath} not found, using default settings.")
-            config = cls()
+            msg = f"Configuration file {json_filepath} not found."
+            raise FileNotFoundError(msg)
 
         return config
 
