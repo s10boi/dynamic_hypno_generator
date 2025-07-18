@@ -77,18 +77,17 @@ When running the program, it checks for and uses the following:
 - **(Optional) Mantra File**: An additional audio file that can be played repeatedly in the background.
 
 ### Text File
-The text file should contain the hypnosis lines you want to be read. By default, from the project root, the file is located in `import/text/lines.txt`. Simply edit this file to change the hypnosis lines.
+The text file should contain the hypnosis lines you want to be read. By default the program looks at the file called `lines.txt` in the root folder. Simply edit this file to change the hypnosis lines.
 
 Also note that the program will automatically update the audio if you change the text file while it is running, so you can edit the lines in real-time.
 
-You can specify a different text file by either updating the `text_filepath` in the config file (see below) or by passing the `-t <text_filepath>` argument when running the program.
+You can specify a different text file by passing the `-t <text_filepath>` argument when running the program.
 
 ### Config File
 The config file is a JSON file that contains various settings for the audio generation. By default, it is located in `config.json` in the project root, and contains all the default settings. The following options are available:
 
 | Setting | Description | Available Options | Default |
 |:--------|:------------|:------------------|:--------|
-| `text_filepath` | Path to the text file containing hypnosis lines.<br><br>**Note**: this will be ignored if the `-t` argument is provided when running the program. | Any valid file path | `./import/text/lines.txt` |
 | `background_audio` | Type of background audio to play | `tone` - A binaural tone with a 1 second wave that shifts between left and right speakers/headphones.<br><br>`noise` - Brown noise.<br><br>`none` - No background audio. | `tone` |
 | `line_chooser` | Method for selecting hypnosis lines | `sequential` - The lines in the text file will always be played in order from top to bottom. If the text file is updated, the changes will not be heard until the current loop through all the existing lines finishes.<br><br>`sequential_refreshing` - Lines will always play in order, but if the text file changes, playback will **immediately** start from top to bottom of the new version of the file.<br><br>`shuffled` - The order of the lines will be shuffled and played in a random order. Once all the lines have been played, the order is shuffled again, and so on. If the text file is updated, the changes will not be heard until the current loop through all the existing lines finishes. <br><br>`random` - A line will be chosen at random every time, though repeating the same line twice in a row is avoided. Updating the text file immediately updates the available lines to randomly select from. | `sequential` |
 | `initial_line_delay` | Delay in seconds before starting to play lines<br><br>**Note**: This will be ignored if the `background_audio` is set to `none` - Hypnosis line playback will begin immediately in this case. | Any positive number | `15.0` |
@@ -118,7 +117,7 @@ As with installation, I recommend using [uv](https://docs.astral.sh/uv/) to run 
 
 #### Providing Arguments
 You can provide the following arguments when running the program with `uv`:
-- `-t <text_filepath>`: Specify a different text file to use for the hypnosis lines. This will override the `text_filepath` in the config file.
+- `-t <text_filepath>`: Specify a different text file to use for the hypnosis lines. This will override the default `lines.txt` file in the project root.
 - `-c <config_filepath>`: Specify a different config file to use. This will override the `config.json` file in the project root.
 
 For example, to run the program with a different text file and config file, you would use:

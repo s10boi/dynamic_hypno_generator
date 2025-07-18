@@ -18,13 +18,14 @@ from src.hypno_queue import (
 from src.log import configure_logger
 
 DEFAULT_CONFIG_PATH = Path("./config.json")
+DEFAULT_TEXT_PATH = Path("./lines.txt")
 BACKGROUND_CHUNK_SIZE = 8000
 LINE_CHUNK_SIZE = 96_000
-LINE_DIR = Path("./import/audio/lines")
+LINE_DIR = Path("./import/lines")
 
 BACKGROUND_AUDIO: dict[str, Path] = {
-    "tone": Path("./import/audio/background/tone.wav"),
-    "noise": Path("./import/audio/background/noise.wav"),
+    "tone": Path("./import/background/tone.wav"),
+    "noise": Path("./import/background/noise.wav"),
 }
 
 LINE_CHOOSERS: dict[str, HypnoLineChooserFn] = {
@@ -39,14 +40,16 @@ def main() -> None:
     # SETUP
     # =====
     # Get settings
-    args = read_args()
+    args = read_args(
+        default_config_path=DEFAULT_CONFIG_PATH,
+        default_text_path=DEFAULT_TEXT_PATH,
+    )
 
     configure_logger(debug=args.debug)
 
     # Load configuration
     config = Config.from_args(
-        json_filepath=args.config or DEFAULT_CONFIG_PATH,
-        text_filepath=args.text_filepath,
+        json_filepath=args.config_filepath,
         available_backgrounds=BACKGROUND_AUDIO.keys(),
         available_line_choosers=LINE_CHOOSERS.keys(),
     )
@@ -61,7 +64,7 @@ def main() -> None:
     audio_generator_process = multiprocessing.Process(
         target=generate_audio,
         kwargs={
-            "text_filepath": config.text_filepath,
+            "text_filepath": args.text_filepath,
             "output_audio_dir": LINE_DIR,
             "hypno_line_mapping": hypno_line_mapping,
             "hypno_lines_lock": hypno_lines_lock,

@@ -161,10 +161,10 @@ cython_debug/
 
 # Custom
 .DS_Store
-import/audio/lines/*
-!import/audio/lines/.gitkeep
-import/audio/mantras/*
-!import/audio/mantras/.gitkeep
+import/lines/*
+!import/lines/.gitkeep
+import/mantras/*
+!import/mantras/.gitkeep
 import/text/*
 !import/text/.gitkeep
 testing.json

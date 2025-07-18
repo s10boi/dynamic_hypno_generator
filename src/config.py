@@ -8,15 +8,12 @@ from pydantic import BaseModel, Field, ValidationError, ValidationInfo, field_va
 
 DEFAULT_BACKGROUND_AUDIO = "tone"
 DEFAULT_LINE_CHOOSER = "sequential"
+DEFAULT_TEXT_PATH = Path("./lines.txt")
 
 
 class Config(BaseModel):
     """Configuration for controlling various settings for hypno generation."""
 
-    text_filepath: Path = Field(
-        default=Path("./import/text/lines.txt"),
-        description="Path to the text file containing lines.",
-    )
     background_audio: str | None = Field(
         default=DEFAULT_BACKGROUND_AUDIO,
         description="Type of background audio to play.",
@@ -107,8 +104,7 @@ class Config(BaseModel):
     def from_args(
         cls,
         *,
-        json_filepath: Path | None,
-        text_filepath: Path | None,
+        json_filepath: Path,
         available_backgrounds: Iterable[str],
         available_line_choosers: Iterable[str],
     ) -> Self:
@@ -117,8 +113,7 @@ class Config(BaseModel):
         If settings are unavailable in the JSON file, default values will be used.
 
         Args:
-            json_filepath (Path | None): Path to the JSON configuration file.
-            text_filepath (Path | None): Path to the text file containing lines.
+            json_filepath (Path): Path to the JSON configuration file.
             available_backgrounds (Iterable[str]): Available background audio types for validation.
             available_line_choosers (Iterable[str]): Available line chooser functions for validation.
 
@@ -126,7 +121,7 @@ class Config(BaseModel):
             Config: An instance of the Config class with settings loaded from the JSON file, using the provided text
             file path if available.
         """
-        if json_filepath and json_filepath.exists():
+        if json_filepath.exists():
             try:
                 logger.debug(f"Loading configuration from {json_filepath}")
                 config = cls.model_validate_json(
@@ -144,26 +139,23 @@ class Config(BaseModel):
             logger.warning(f"Configuration file {json_filepath} not found, using default settings.")
             config = cls()
 
-        if text_filepath and text_filepath.exists():
-            config.text_filepath = text_filepath
-
         return config
 
 
-def read_args() -> argparse.Namespace:
+def read_args(*, default_config_path: Path, default_text_path: Path) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Hypno Audio Generation and Playback")
     _ = parser.add_argument(
         "-c",
-        "--config",
+        "--config_filepath",
         type=Path,
-        default=None,
+        default=default_config_path,
         help="Path to a JSON file containing configuration settings.",
     )
     _ = parser.add_argument(
         "-t",
         "--text_filepath",
         type=Path,
-        default=None,
+        default=default_text_path,
         help="Path to the text file containing lines to be converted to audio.",
     )
     _ = parser.add_argument(
