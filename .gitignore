@@ -164,7 +164,5 @@ cython_debug/
 import/lines/*
 !import/lines/.gitkeep
 import/mantras/*
-!import/mantras/.gitkeep
-import/text/*
-!import/text/.gitkeep
+!import/mantras/relax_sink_enjoy.mp3
 testing.json

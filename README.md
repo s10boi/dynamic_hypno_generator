@@ -94,13 +94,13 @@ The config file is a JSON file that contains various settings for the audio gene
 | `initial_pitch_shift` | Initial pitch shift for the audio lines, in semitones.<br><br>Use this to set the voice to sound higher (positive number) or lower (negative number) in pitch than your system's text-to-speech voice. | Any number | `-1.44` |
 | `max_echoes` | Maximum number of echoes to play for each line<br><br>Each echo is a delayed repetition of the original line, with the delay specified by `echo_delay`. Each echo is lower in pitch and quieter than the last. | `0` to `3` (inclusive) | `2` |
 | `echo_delay` | Delay in seconds between echoes. | Any positive number | `1.5` |
-| `mantra_filepath` | Path to mantra audio file, or `none` for no mantra | Any valid file path or `none` | `none` |
+| `mantra_filepath` | Path to mantra audio file, or `none` for no mantra | Any valid file path or `none` | `./import/mantras/relax_sink_enjoy.mp3` |
 | `mantra_start_delay` | Delay in seconds after hypnosis line playback begins, before starting mantra playback<br><br>**Note**: This will be ignored if the `mantra_filepath` is set to `none` - Mantra playback will not occur in this case. | Any positive number | `45.0` |
 
 ### Mantra File
 The mantra file is an audio file that can be played repeatedly in the background while the hypnosis lines are being read. It typically consists of a few repeating words that fade in and out. It starts playing after the background tone and main hypnosis lines have started playing, and continues to play until the program is stopped.
 
-I've made some sample files available in my [Google Drive](https://drive.google.com/drive/folders/1Uv9Og_GMYDpb2TKv_IzRYOutmHBePzaW?usp=sharing) for use with this program as an example.
+A basic eample is included, and I've made some sample files available in my [Google Drive](https://drive.google.com/drive/folders/1Uv9Og_GMYDpb2TKv_IzRYOutmHBePzaW?usp=sharing) for use with this program.
 
 Make sure to set the `mantra_filepath` in the config file to the path of the mantra audio file you want to use, or set it to `none` if you don't want to use a mantra.
 
