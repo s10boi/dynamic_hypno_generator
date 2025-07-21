@@ -115,6 +115,9 @@ A basic example is included in `./import/mantras`, and I've made some sample fil
 
 Make sure to set the `mantra_filepath` in the config file to the path of the mantra audio file you want to use, or set it to `none` if you don't want to use a mantra.
 
+> **How Do I Make My Own Mantra File?**
+> Unfortunately, it's not possible to also generate the background mantra text and effects in real time. I made a guide on [how I make my own mantra files](https://s10boi.blogspot.com/2024/03/how-i-make-hypno-programs.html), which uses my other hypno generation program, available [here](https://github.com/s10boi/hypno_audio_generator)
+
 ## Running the Program
 As with installation, I recommend using [uv](https://docs.astral.sh/uv/) to run the program, but you can also use `pip` if you prefer.
 
