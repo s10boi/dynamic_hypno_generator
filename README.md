@@ -20,8 +20,11 @@ A program that dynamically generates repeating hypnosis audio, complete with sou
 
 ## Requirements
 - [Python 3.13](https://www.python.org/downloads/release/python-313/) or higher.
-- **Optional**: [uv](https://docs.astral.sh/uv/) - to simplify dependency management and running the program, or pip if you prefer (see [installation notes](#installation) below).
-- **Windows Only**: [Build Tools for Visual Studio](https://visualstudio.microsoft.com/visual-cpp-build-tools/). You will need the "Desktop development with C++" workload. This is required to install pedalboard, which is used for audio effects.
+- **Windows Only**:
+  - [Build Tools for Visual Studio](https://visualstudio.microsoft.com/visual-cpp-build-tools/). You will need the "Desktop development with C++" workload. This is required to install pedalboard, which is used for audio effects.
+  - [Git for Windows](https://gitforwindows.org/) - required to install pedalboard. Ensure you set up your git credentials if you haven't already.
+- **Optional**:
+  - [uv](https://docs.astral.sh/uv/) - to simplify dependency management and running the program, or pip if you prefer (see [installation notes](#installation) below).
 - Pretty decent system resources - unsure of exact requirements, but it can be resource-intensive to generate audio and apply the effects in real-time.
 
 ## Installation
@@ -29,7 +32,7 @@ I strongly recommend using [uv](https://docs.astral.sh/uv/), which will simplify
 
 ⚠️ I've had numerous issues trying to install pedalboard (used for audio effects) on Windows using `pip`, so I especially recommend using `uv` if you're on Windows.
 
-⚠️ If you're on Windows, ensure you've installed the "Desktop development with C++" workload from [Build Tools for Visual Studio](https://visualstudio.microsoft.com/visual-cpp-build-tools/) as mentioned in the requirements.
+⚠️ If you're on Windows, ensure you've installed the "Desktop development with C++" workload from [Build Tools for Visual Studio](https://visualstudio.microsoft.com/visual-cpp-build-tools/), as well as git, as mentioned in the requirements.
 
 ### Using `uv`
 1. Clone or download the respository
