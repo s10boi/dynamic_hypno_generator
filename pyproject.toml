@@ -1,6 +1,6 @@
 [project]
 name = "dynamic-hypno-generator"
-version = "0.1.1"
+version = "0.1.2"
 description = "A program that dynamically generates repeating hypnosis audio, complete with sound effects and multi-layered audio, using text-to-speech."
 authors = [
   {name = "s10boi"},
@@ -10,7 +10,8 @@ requires-python = ">=3.13"
 dependencies = [
     "loguru>=0.7.3",
     "numpy>=2.3.1",
-    "pedalboard",
+    "pedalboard>=0.9.16 ; sys_platform != 'win32'",
+    "pedalboard>=0.9.16,!=0.9.17 ; sys_platform == 'win32'",
     "pydantic>=2.11.7",
     "pyttsx3>=2.99",
 ]
@@ -20,6 +21,3 @@ dev-dependencies = [
     "pytest>=8.3.2",
     "ruff>=0.6.4",
 ]
-
-[tool.uv.sources]
-pedalboard = { git = "https://github.com/spotify/pedalboard", marker = "platform_system == 'Windows'" }
