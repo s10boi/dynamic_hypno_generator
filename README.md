@@ -20,6 +20,8 @@ A program that dynamically generates repeating hypnosis audio, complete with sou
 
 ## Requirements
 - [Python 3.13](https://www.python.org/downloads/release/python-313/) or higher.
+- **Windows Only**:
+  - [Microsoft Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist) - required for audio effects. Ensure you download the right version for your system architecture.
 - **Optional**:
   - [uv](https://docs.astral.sh/uv/) - to simplify dependency management and running the program, or pip if you prefer (see [installation notes](#installation) below).
 - Pretty decent system resources - unsure of exact requirements, but it can be resource-intensive to generate audio and apply the effects in real-time.
