@@ -1,7 +1,7 @@
 {
     "background_audio": "tone",
     "line_chooser": "sequential",
-    "initial_line_delay": 0.0,
+    "initial_line_delay": 15.0,
     "initial_pitch_shift": -1.44,
     "max_echoes": 2,
     "echo_delay": 1.5,
