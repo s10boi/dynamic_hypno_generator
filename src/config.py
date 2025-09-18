@@ -1,10 +1,16 @@
+from __future__ import annotations
+
 import argparse
-from collections.abc import Iterable
 from pathlib import Path
-from typing import Any, Self, cast
+from typing import TYPE_CHECKING, Any, Self, cast
 
 from loguru import logger
-from pydantic import BaseModel, Field, ValidationError, ValidationInfo, field_validator
+from pydantic import BaseModel, Field, ValidationError, field_validator
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from pydantic import ValidationInfo
 
 DEFAULT_BACKGROUND_AUDIO = "tone"
 DEFAULT_LINE_CHOOSER = "sequential"

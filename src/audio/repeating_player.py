@@ -1,9 +1,13 @@
-from pathlib import Path
-from typing import final
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, final
 
 from pedalboard.io import AudioStream
 
 from src.audio.line_player import AudioFile
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 @final

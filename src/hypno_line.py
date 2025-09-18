@@ -1,9 +1,13 @@
+from __future__ import annotations
+
 from hashlib import sha256
-from pathlib import Path
-from typing import Self, final, override
+from typing import TYPE_CHECKING, Self, final, override
 
 from loguru import logger
 from pedalboard.io import AudioFile
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 @final

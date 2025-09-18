@@ -1,11 +1,17 @@
 target-version = "py313"
 line-length = 120
 preview = true
-lint.select = [
+fix = true
+
+[format]
+docstring-code-format = true
+
+[lint]
+future-annotations = true
+select = [
     "ALL"
 ]
-
-lint.ignore = [
+ignore = [
     "CPY001",  # Missing copyright notice
     "D100",  # Missing docstring in public module
     "D101",  # Missing docstring in public class

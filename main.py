@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 import multiprocessing
 import sys
 import threading
 import time
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from loguru import logger
 from pydantic import ValidationError
@@ -11,7 +14,6 @@ from src.audio.repeating_player import RepeatingAudioPlayer
 from src.audio.tts import generate_audio
 from src.config import Config, read_args
 from src.hypno_queue import (
-    HypnoLineChooserFn,
     LinePlayer,
     get_random_lines,
     get_sequential_lines,
@@ -20,6 +22,11 @@ from src.hypno_queue import (
     queue_hypno_lines,
 )
 from src.log import configure_logger
+
+if TYPE_CHECKING:
+    from src.hypno_queue import (
+        HypnoLineChooserFn,
+    )
 
 DEFAULT_CONFIG_PATH = Path("./config.json")
 DEFAULT_TEXT_PATH = Path("./lines.txt")

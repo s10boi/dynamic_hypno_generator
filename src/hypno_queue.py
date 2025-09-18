@@ -1,11 +1,16 @@
+from __future__ import annotations
+
 import multiprocessing
 import multiprocessing.synchronize
 import random
 import time
 from collections.abc import Callable, Iterator, Mapping
+from typing import TYPE_CHECKING
 
-from src.audio.line_player import LinePlayer
 from src.hypno_line import HypnoLine
+
+if TYPE_CHECKING:
+    from src.audio.line_player import LinePlayer
 
 type HypnoLineChooserFn = Callable[
     [Mapping[str, HypnoLine], multiprocessing.synchronize.Lock],

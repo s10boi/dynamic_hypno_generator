@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from queue import Queue
-from typing import Self, final
+from typing import TYPE_CHECKING, Self, final
 
 import numpy as np
 from loguru import logger
@@ -12,8 +14,10 @@ from pedalboard import (
 )
 from pedalboard.io import AudioFile, AudioStream
 
-from src.config import Config
 from src.hypno_line import HypnoLine
+
+if TYPE_CHECKING:
+    from src.config import Config
 
 
 @final

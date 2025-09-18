@@ -1,14 +1,19 @@
+from __future__ import annotations
+
 import multiprocessing
-import multiprocessing.synchronize
 import time
-from collections.abc import MutableMapping
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from loguru import logger
 
 from src.audio.speech import get_engine
 from src.hypno_line import HypnoLine, clean_line
 from src.log import configure_logger
+
+if TYPE_CHECKING:
+    import multiprocessing.synchronize
+    from collections.abc import MutableMapping
 
 FILE_WRITE_WAIT = 2
 SLEEP_PERIOD = 5
