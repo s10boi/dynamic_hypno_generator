@@ -1,16 +1,13 @@
-target-version = "py313"
 line-length = 120
 preview = true
-fix = true
-
-[format]
-docstring-code-format = true
 
 [lint]
-future-annotations = true
 select = [
-    "ALL"
+    "ALL"  # Enable all rules by default and exclude specific ones below
 ]
+
+future-annotations = true  # Add from __future__ import annotations and TYPE_CHECKING if needed
+
 ignore = [
     "CPY001",  # Missing copyright notice
     "D100",  # Missing docstring in public module
@@ -18,18 +15,10 @@ ignore = [
     "D102",  # Missing docstring in public method
     "D103",  # Missing docstring in public function
     "D105",  # Missing docstring in magic method
-    "DOC201",  # Missing return in docstring
     "T201",  # Warning for the use of "print"
-    "RUF001",  # Ambiguous characters (e.g. Chinese brackets)
     "D106",  # Missing docstring in public nested class
+    "DOC201",  # Missing return in docstring - not needed for simple cases
 ]
-
-[lint.pydocstyle]
-convention = "google"
-
-[lint.flake8-annotations]
-ignore-fully-untyped = true
-allow-star-arg-any = true
 
 [lint.per-file-ignores]
 "__init__.py" = [
@@ -41,4 +30,8 @@ allow-star-arg-any = true
     "D",  # Ignore missing docstrings in tests
     "PLC2701",  # Ignore too many local variables
     "S101",  # Use of assert detected
+    "INP001",  # Ignore __init__.py not being used in tests directory
 ]
+
+[lint.pydocstyle]
+convention = "google"

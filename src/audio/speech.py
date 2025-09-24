@@ -1,6 +1,6 @@
 from typing import cast
 
-import pyttsx3
+import pyttsx3  # pyright: ignore[reportMissingTypeStubs]
 
 
 def get_engine() -> pyttsx3.Engine:
