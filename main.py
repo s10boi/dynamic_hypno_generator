@@ -10,11 +10,11 @@ from typing import TYPE_CHECKING
 from loguru import logger
 from pydantic import ValidationError
 
+from src.audio.line_player import LinePlayer
 from src.audio.repeating_player import RepeatingAudioPlayer
 from src.audio.tts import generate_audio
 from src.config import Config, read_args
 from src.hypno_queue import (
-    LinePlayer,
     get_random_lines,
     get_sequential_lines,
     get_sequential_refreshing_lines,
