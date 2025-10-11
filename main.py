@@ -11,6 +11,8 @@ from typing import TYPE_CHECKING
 from loguru import logger
 from pydantic import ValidationError
 from pydub import AudioSegment
+import numpy as np
+from pedalboard import Pedalboard, PitchShift, Gain, Delay, Mix  # offline effect processing
 
 from src.audio.line_player import LinePlayer
 from src.audio.repeating_player import RepeatingAudioPlayer
@@ -100,11 +102,15 @@ def render_full_mix(
     text_filepath: Path,
     hypno_line_chooser: HypnoLineChooserFn,
     mantra_start_delay: float = 0.0,
+    initial_line_delay: float = 0.0,
+    initial_pitch_shift: float = 0.0,
+    max_echoes: int = 0,
+    echo_delay: float = 0.0,
 ) -> None:
     """Render a full static mix of all line audio files ordered via the configured line chooser.
 
-    The chooser functions return infinite iterators, so this function collects exactly one unique occurrence of each
-    line in the order produced by the chooser (mirroring live playback ordering strategies).
+    Added: offline application of pitch shift + echo chain mirroring realtime playback,
+    initial silence respecting `initial_line_delay`, and mantra looping.
     """
     if not text_filepath.exists():
         logger.error(f"Text file {text_filepath} not found; cannot render mix.")
@@ -117,45 +123,85 @@ def render_full_mix(
             if (clean := clean_line(raw)) and clean not in lines:
                 lines.append(clean)
 
-    # Ensure all needed line audio exists (generate missing, handle pauses)
     generated_mapping = generate_lines_once(lines, lines_dir)
-
-    # Use mapping returned (guaranteed durations if files were created) but fall back to constructing HypnoLines for
-    # any line that somehow failed to generate
     hypno_line_mapping: dict[str, HypnoLine] = {
         line: generated_mapping.get(line) or HypnoLine.from_text(line, lines_dir) for line in lines
     }
 
-    # Obtain ordered unique lines using chooser
     ordered_lines = _get_unique_line_order_for_mix(
         hypno_line_chooser=hypno_line_chooser,
         hypno_line_mapping=hypno_line_mapping,
     )
-
     if not ordered_lines:
         logger.error("No hypno lines available to render.")
         return
 
-    # Load audio segments in chosen order, skipping any missing files with a warning
-    segments: list[AudioSegment] = []
-    for hypno_line in ordered_lines:
-        if hypno_line.filepath.exists():
-            try:
-                segments.append(AudioSegment.from_file(hypno_line.filepath))
-            except Exception as exc:  # noqa: BLE001
-                logger.warning(f"Failed to load audio for line '{hypno_line.text}': {exc}")
-        else:
-            logger.warning(f"Missing audio file for line '{hypno_line.text}': {hypno_line.filepath}")
+    # Helper: process a single line with pitch + echoes (sequential, no overlap with next line) offline
+    max_tail_seconds = max_echoes * echo_delay if max_echoes > 0 else 0.0
 
-    if not segments:
-        logger.error("No audio segments could be loaded; aborting mix render.")
+    def _process_line(seg: AudioSegment) -> AudioSegment:
+        if max_echoes <= 0 and abs(initial_pitch_shift) < 1e-6:
+            return seg  # nothing to do
+        try:
+            frame_rate = seg.frame_rate
+            channels = seg.channels
+            samples = np.array(seg.get_array_of_samples())
+            if channels > 1:
+                samples = samples.reshape((-1, channels))
+            else:
+                samples = samples.reshape((-1, 1))
+            samples = samples.astype(np.float32) / (2 ** 15)
+            samples = samples.T  # shape: (channels, n)
+
+            # Pad tail for echoes
+            if max_tail_seconds > 0:
+                pad_len = int(frame_rate * max_tail_seconds)
+                if pad_len > 0:
+                    samples = np.pad(samples, ((0, 0), (0, pad_len)))  # type: ignore[arg-type]
+
+            boards = [Pedalboard([PitchShift(semitones=initial_pitch_shift)])]
+            for i in range(1, max_echoes + 1):
+                boards.append(
+                    Pedalboard([
+                        PitchShift(semitones=initial_pitch_shift - (i * 0.5)),
+                        Gain(gain_db=-12 * i),
+                        Delay(delay_seconds=i * echo_delay, mix=0.5),
+                    ])
+                )
+            mix_board = Pedalboard([Mix(boards)]) if len(boards) > 1 else boards[0]
+            processed = mix_board(samples, frame_rate)
+            # Clip & convert back
+            processed = np.clip(processed, -1.0, 1.0)
+            processed = (processed.T * (2 ** 15 - 1)).astype(np.int16).tobytes()
+            return AudioSegment(
+                data=processed,
+                sample_width=2,
+                frame_rate=frame_rate,
+                channels=channels,
+            )
+        except Exception as exc:  # noqa: BLE001
+            logger.warning(f"Failed processing line effects offline: {exc}; using original line.")
+            return seg
+
+    # Concatenate with processing & initial delay
+    full_lines = AudioSegment.silent(duration=int(initial_line_delay * 1000))
+    for hypno_line in ordered_lines:
+        if not hypno_line.filepath.exists():
+            logger.warning(f"Missing audio file for line '{hypno_line.text}': {hypno_line.filepath}")
+            continue
+        try:
+            seg = AudioSegment.from_file(hypno_line.filepath)
+        except Exception as exc:  # noqa: BLE001
+            logger.warning(f"Failed to load audio for line '{hypno_line.text}': {exc}")
+            continue
+        seg = _process_line(seg)
+        full_lines += seg
+
+    if len(full_lines) == 0:
+        logger.error("Empty mix after processing; aborting.")
         return
 
-    full_lines = segments[0]
-    for segment in segments[1:]:
-        full_lines += segment
-
-    # Overlay background if provided
+    # Background overlay (loop)
     if background_path and background_path.exists():
         try:
             background = AudioSegment.from_file(background_path)
@@ -166,36 +212,31 @@ def render_full_mix(
         except Exception as exc:  # noqa: BLE001
             logger.warning(f"Failed to process background audio '{background_path}': {exc}")
 
-    # Overlay mantra if provided (after optional start delay)
+    # Mantra overlay (loop after delay)
     if mantra_path and mantra_path.exists():
         try:
             mantra = AudioSegment.from_file(mantra_path)
             delay_ms = int(mantra_start_delay * 1000)
             if delay_ms >= len(full_lines):
                 logger.warning(
-                    f"Mantra start delay ({mantra_start_delay}s) exceeds or equals mix length ({len(full_lines)/1000:.2f}s); skipping mantra overlay.",
+                    f"Mantra start delay ({mantra_start_delay}s) >= mix length ({len(full_lines)/1000:.2f}s); skipping mantra.",
                 )
             else:
                 remaining_ms = len(full_lines) - delay_ms
-                # Always loop mantra to cover remaining duration (even if equal length to catch boundary cases)
-                loops_needed = (remaining_ms + len(mantra) - 1) // len(mantra)  # ceiling division
-                if loops_needed > 1:
-                    mantra_looped = mantra * loops_needed
-                else:
-                    mantra_looped = mantra
-                mantra_looped = mantra_looped[:remaining_ms]
-                # Apply a very short crossfade at loop boundaries to avoid clicks (if we actually looped)
-                # (pydub overlay already handles simple concatenation; advanced smoothing could be added later)
+                loops_needed = (remaining_ms + len(mantra) - 1) // len(mantra)
+                mantra_looped = (mantra * loops_needed)[:remaining_ms]
                 full_lines = full_lines.overlay(mantra_looped - 5, position=delay_ms)
         except Exception as exc:  # noqa: BLE001
             logger.warning(f"Failed to process mantra audio '{mantra_path}': {exc}")
 
-    # Ensure output directory exists
     output_path.parent.mkdir(parents=True, exist_ok=True)
-
     try:
         full_lines.export(output_path, format=output_path.suffix.lstrip('.'))
-        logger.info(f"Exported full mix to {output_path}")
+        logger.info(
+            "Exported full mix to %s (duration %.2fs)",
+            output_path,
+            len(full_lines) / 1000.0,
+        )
     except Exception as exc:  # noqa: BLE001
         logger.error(f"Failed to export full mix to {output_path}: {exc}")
 
@@ -245,6 +286,10 @@ def main() -> None:
             text_filepath=args.text_filepath,
             hypno_line_chooser=LINE_CHOOSERS[config.line_chooser],
             mantra_start_delay=config.mantra_start_delay,
+            initial_line_delay=config.initial_line_delay,
+            initial_pitch_shift=config.initial_pitch_shift,
+            max_echoes=config.max_echoes,
+            echo_delay=config.echo_delay,
         )
         return
 
