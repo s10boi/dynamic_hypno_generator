@@ -185,6 +185,7 @@ def render_full_mix(
 
     # Concatenate with processing & initial delay
     full_lines = AudioSegment.silent(duration=int(initial_line_delay * 1000))
+    current_position_ms = int(initial_line_delay * 1000)
     for hypno_line in ordered_lines:
         if not hypno_line.filepath.exists():
             logger.warning(f"Missing audio file for line '{hypno_line.text}': {hypno_line.filepath}")
@@ -194,8 +195,15 @@ def render_full_mix(
         except Exception as exc:  # noqa: BLE001
             logger.warning(f"Failed to load audio for line '{hypno_line.text}': {exc}")
             continue
-        seg = _process_line(seg)
-        full_lines += seg
+        dry_len_ms = len(seg)
+        processed_with_echoes = _process_line(seg)
+        # Ensure base mix is long enough to overlay processed audio including its echo tail
+        end_required = current_position_ms + len(processed_with_echoes)
+        if len(full_lines) < end_required:
+            full_lines += AudioSegment.silent(duration=end_required - len(full_lines))
+        full_lines = full_lines.overlay(processed_with_echoes, position=current_position_ms)
+        # Advance only by the dry line length so echoes ring underneath next line (maintain rhythm)
+        current_position_ms += dry_len_ms
 
     if len(full_lines) == 0:
         logger.error("Empty mix after processing; aborting.")
