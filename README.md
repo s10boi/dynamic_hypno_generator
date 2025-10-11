@@ -8,6 +8,7 @@ A program that dynamically generates repeating hypnosis audio, complete with sou
 - **Dynamic Audio Generation**: Combines multiple audio layers, including background tones and echo effects.
 - **Live Updating Audio**: Updating the source text file changes the lines in the generated audio without needing to restart the application.
 - **Display Current Line**: The program prints the currently playing line to the terminal, allowing you or others to see what the user is currently hearing.
+- **Inline Pause Directives**: Insert natural timing using `[pause X seconds]` tokens inside a line; they add silence without being spoken.
 
 ## Table of Contents
 1. [Requirements](#requirements)
@@ -94,6 +95,31 @@ Also note that the program will automatically update the audio if you change the
 
 You can specify a different text file by passing the `-t <text_filepath>` argument when running the program. See the [Running the Program](#running-the-program) section for details on how to do this.
 
+#### Inline Pause Directives
+You can embed timed pauses directly within a single line using the syntax:
+
+```
+[pause X seconds]
+```
+
+Where `X` can be an integer or decimal (e.g. `1`, `1.5`, `2`, `2.25`). The directive is:
+- Case-insensitive (`[Pause 2 Seconds]` also works)
+- Not spoken by the text-to-speech engine
+- Replaced by *silence* of the specified duration in the rendered audio
+
+You can place multiple pauses inside a line. Example:
+```
+Take a deep breath in [pause 1.5 seconds] and out [pause 2 seconds] sinking deeper now.
+```
+This produces a single audio file for the entire line with two natural gaps. The pauses are resolved **at generation time**; changing pause durations counts as a changed line (a new audio file will be generated because the full text including the pause tokens is hashed).
+
+Guidelines:
+- Keep pauses within a reasonable range (fractions of a second up to ~10 seconds are fine).
+- A line containing only a pause is ignored (silence-only lines are not generated as separate files).
+- Spacing inside the directive must at least separate the words, e.g. `[pause   2   seconds]` is fine; just make sure the number is present.
+
+If you ever want a literal bracketed phrase read out, avoid the exact `pause ... seconds` pattern (e.g. rephrase or remove the word `seconds`).
+
 ### Config File
 The config file is a JSON file that contains various settings for the audio generation. By default, it is located in `config.json` in the project root, and contains all the default settings. The following options are available:
 
@@ -136,7 +162,7 @@ You can provide the following arguments when running the program:
 - `-t <text_filepath>` or `--text-filepath <text_filepath>`: Specify a different text file to use for the hypnosis lines. This will override the default `lines.txt` file in the project root.
 - `-c <config_filepath>` or `--config-filepath <config_filepath>`: Specify a different config file to use. This will override the `config.json` file in the project root.
 - `--debug`: Enable debug logging.
-- `--render-mix`: Render all lines, tone, and mantra into a single audio file (no playback).
+- `--render-mix`: Render all lines, tone, and mantra into a single audio file (no playback). The mantra will begin at the configured `mantra_start_delay` (from your config). If that delay is longer than the total length of the rendered line audio, the mantra is skipped. Any missing hypnosis line audio is automatically generated first (including handling inline pause directives) before the mix is assembled.
 - `--mix-output <filename>`: Specify the output file name for the rendered mix (default: `full_mix.wav`).
 
 For example, to render a mix and save it as `my_mix.wav`:
@@ -246,3 +272,4 @@ Further issues can be reported on the [GitHub Issues page](https://github.com/s1
 2. **Install ffmpeg using Homebrew:**
    ```sh
    brew install ffmpeg
+   ```

@@ -14,7 +14,7 @@ from pydub import AudioSegment
 
 from src.audio.line_player import LinePlayer
 from src.audio.repeating_player import RepeatingAudioPlayer
-from src.audio.tts import generate_audio
+from src.audio.tts import generate_audio, generate_lines_once  # added generate_lines_once
 from src.config import Config, read_args
 from src.hypno_queue import (
     get_random_lines,
@@ -24,6 +24,7 @@ from src.hypno_queue import (
     queue_hypno_lines,
 )
 from src.log import configure_logger
+from src.hypno_line import HypnoLine, clean_line  # new import for mix ordering
 
 if TYPE_CHECKING:
     from src.hypno_queue import (
@@ -49,39 +50,154 @@ LINE_CHOOSERS: dict[str, HypnoLineChooserFn] = {
 }
 
 
+# Helper to apply a HypnoLineChooserFn exactly once to collect a unique ordered list
+# (the chooser functions are designed to be infinite streams)
+def _get_unique_line_order_for_mix(
+    *,
+    hypno_line_chooser: HypnoLineChooserFn,
+    hypno_line_mapping: dict[str, HypnoLine],
+) -> list[HypnoLine]:
+    if not hypno_line_mapping:
+        return []
+
+    manager = multiprocessing.Manager()
+    lock = manager.Lock()  # chooser API expects a multiprocessing lock
+
+    iterator = hypno_line_chooser(hypno_line_mapping, lock)
+
+    needed = len(hypno_line_mapping)
+    seen: set[str] = set()
+    ordered: list[HypnoLine] = []
+
+    # Safeguard to avoid infinite loops in case of unexpected chooser behaviour
+    max_iterations = needed * 20
+    while len(seen) < needed and max_iterations > 0:
+        hypno_line = next(iterator)
+        if hypno_line.text not in seen:
+            ordered.append(hypno_line)
+            seen.add(hypno_line.text)
+        max_iterations -= 1
+
+    if len(ordered) < needed:
+        logger.warning(
+            "Did not collect all lines via chooser (collected {collected}/{needed}). Falling back to remaining lines in insertion order.",
+            collected=len(ordered),
+            needed=needed,
+        )
+        # Append any missing lines in the original mapping order
+        for text, line in hypno_line_mapping.items():
+            if text not in seen:
+                ordered.append(line)
+    return ordered
+
+
 def render_full_mix(
+    *,
     lines_dir: Path,
     background_path: Path | None,
     mantra_path: Path | None,
     output_path: Path,
-):
-    # Collect all line files
-    line_files = sorted(lines_dir.glob("*.wav"))
-    if not line_files:
-        logger.error("No hypno lines found to render.")
+    text_filepath: Path,
+    hypno_line_chooser: HypnoLineChooserFn,
+    mantra_start_delay: float = 0.0,
+) -> None:
+    """Render a full static mix of all line audio files ordered via the configured line chooser.
+
+    The chooser functions return infinite iterators, so this function collects exactly one unique occurrence of each
+    line in the order produced by the chooser (mirroring live playback ordering strategies).
+    """
+    if not text_filepath.exists():
+        logger.error(f"Text file {text_filepath} not found; cannot render mix.")
         return
 
-    # Concatenate all lines
-    lines_audio = [AudioSegment.from_file(f) for f in line_files]
-    full_lines = sum(lines_audio[1:], lines_audio[0])
+    # Build unique ordered list of raw lines (with pause directives intact) from file
+    lines: list[str] = []
+    with text_filepath.open(encoding="utf-8") as f:
+        for raw in f:
+            if (clean := clean_line(raw)) and clean not in lines:
+                lines.append(clean)
+
+    # Ensure all needed line audio exists (generate missing, handle pauses)
+    generated_mapping = generate_lines_once(lines, lines_dir)
+
+    # Use mapping returned (guaranteed durations if files were created) but fall back to constructing HypnoLines for
+    # any line that somehow failed to generate
+    hypno_line_mapping: dict[str, HypnoLine] = {
+        line: generated_mapping.get(line) or HypnoLine.from_text(line, lines_dir) for line in lines
+    }
+
+    # Obtain ordered unique lines using chooser
+    ordered_lines = _get_unique_line_order_for_mix(
+        hypno_line_chooser=hypno_line_chooser,
+        hypno_line_mapping=hypno_line_mapping,
+    )
+
+    if not ordered_lines:
+        logger.error("No hypno lines available to render.")
+        return
+
+    # Load audio segments in chosen order, skipping any missing files with a warning
+    segments: list[AudioSegment] = []
+    for hypno_line in ordered_lines:
+        if hypno_line.filepath.exists():
+            try:
+                segments.append(AudioSegment.from_file(hypno_line.filepath))
+            except Exception as exc:  # noqa: BLE001
+                logger.warning(f"Failed to load audio for line '{hypno_line.text}': {exc}")
+        else:
+            logger.warning(f"Missing audio file for line '{hypno_line.text}': {hypno_line.filepath}")
+
+    if not segments:
+        logger.error("No audio segments could be loaded; aborting mix render.")
+        return
+
+    full_lines = segments[0]
+    for segment in segments[1:]:
+        full_lines += segment
 
     # Overlay background if provided
     if background_path and background_path.exists():
-        background = AudioSegment.from_file(background_path)
-        background = background * (len(full_lines) // len(background) + 1)
-        background = background[:len(full_lines)]
-        full_lines = full_lines.overlay(background - 10)
+        try:
+            background = AudioSegment.from_file(background_path)
+            if len(background) < len(full_lines):
+                background = background * (len(full_lines) // len(background) + 1)
+            background = background[: len(full_lines)]
+            full_lines = full_lines.overlay(background - 10)
+        except Exception as exc:  # noqa: BLE001
+            logger.warning(f"Failed to process background audio '{background_path}': {exc}")
 
-    # Overlay mantra if provided
+    # Overlay mantra if provided (after optional start delay)
     if mantra_path and mantra_path.exists():
-        mantra = AudioSegment.from_file(mantra_path)
-        mantra = mantra * (len(full_lines) // len(mantra) + 1)
-        mantra = mantra[:len(full_lines)]
-        full_lines = full_lines.overlay(mantra - 5)
+        try:
+            mantra = AudioSegment.from_file(mantra_path)
+            delay_ms = int(mantra_start_delay * 1000)
+            if delay_ms >= len(full_lines):
+                logger.warning(
+                    f"Mantra start delay ({mantra_start_delay}s) exceeds or equals mix length ({len(full_lines)/1000:.2f}s); skipping mantra overlay.",
+                )
+            else:
+                remaining_ms = len(full_lines) - delay_ms
+                # Always loop mantra to cover remaining duration (even if equal length to catch boundary cases)
+                loops_needed = (remaining_ms + len(mantra) - 1) // len(mantra)  # ceiling division
+                if loops_needed > 1:
+                    mantra_looped = mantra * loops_needed
+                else:
+                    mantra_looped = mantra
+                mantra_looped = mantra_looped[:remaining_ms]
+                # Apply a very short crossfade at loop boundaries to avoid clicks (if we actually looped)
+                # (pydub overlay already handles simple concatenation; advanced smoothing could be added later)
+                full_lines = full_lines.overlay(mantra_looped - 5, position=delay_ms)
+        except Exception as exc:  # noqa: BLE001
+            logger.warning(f"Failed to process mantra audio '{mantra_path}': {exc}")
 
-    # Export
-    full_lines.export(output_path, format=output_path.suffix.lstrip('.'))
-    logger.info(f"Exported full mix to {output_path}")
+    # Ensure output directory exists
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    try:
+        full_lines.export(output_path, format=output_path.suffix.lstrip('.'))
+        logger.info(f"Exported full mix to {output_path}")
+    except Exception as exc:  # noqa: BLE001
+        logger.error(f"Failed to export full mix to {output_path}: {exc}")
 
 
 def read_args_with_render(default_config_path=DEFAULT_CONFIG_PATH, default_text_path=DEFAULT_TEXT_PATH):
@@ -120,12 +236,15 @@ def main() -> None:
         sys.exit(1)
 
     if args.render_mix:
-        print("RENDER MIX BLOCK REACHED")  # Add this
+        logger.info("Rendering full mix using line chooser '%s'", config.line_chooser)
         render_full_mix(
             lines_dir=LINE_DIR,
             background_path=BACKGROUND_AUDIO.get(config.background_audio),
             mantra_path=Path(config.mantra_filepath) if config.mantra_filepath else None,
             output_path=Path(args.mix_output),
+            text_filepath=args.text_filepath,
+            hypno_line_chooser=LINE_CHOOSERS[config.line_chooser],
+            mantra_start_delay=config.mantra_start_delay,
         )
         return
 
@@ -207,7 +326,7 @@ def main() -> None:
         )
         line_player_thread.start()
 
-    # ================
+        # ================
     # MANTRA PLAYBACK
     # ================
     if config.mantra_filepath:
