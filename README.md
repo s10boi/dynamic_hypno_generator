@@ -8,6 +8,7 @@ A program that dynamically generates repeating hypnosis audio, complete with sou
 - **Dynamic Audio Generation**: Combines multiple audio layers, including background tones and echo effects.
 - **Live Updating Audio**: Updating the source text file changes the lines in the generated audio without needing to restart the application.
 - **Display Current Line**: The program prints the currently playing line to the terminal, allowing you or others to see what the user is currently hearing.
+- **Inline Pause Directives**: Insert natural timing using `[pause X seconds]` tokens inside a line; they add silence without being spoken.
 
 ## Table of Contents
 1. [Requirements](#requirements)
@@ -20,6 +21,8 @@ A program that dynamically generates repeating hypnosis audio, complete with sou
 
 ## Requirements
 - [Python 3.13](https://www.python.org/downloads/release/python-313/) or higher.
+- **ffmpeg** (required for audio exporting):
+  - See [How to Install ffmpeg](#how-to-install-ffmpeg) below.
 - **Windows Only**:
   - [Microsoft Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist) - required for audio effects. Ensure you download the right version for your system architecture.
 - **Optional**:
@@ -92,6 +95,31 @@ Also note that the program will automatically update the audio if you change the
 
 You can specify a different text file by passing the `-t <text_filepath>` argument when running the program. See the [Running the Program](#running-the-program) section for details on how to do this.
 
+#### Inline Pause Directives
+You can embed timed pauses directly within a single line using the syntax:
+
+```
+[pause X seconds]
+```
+
+Where `X` can be an integer or decimal (e.g. `1`, `1.5`, `2`, `2.25`). The directive is:
+- Case-insensitive (`[Pause 2 Seconds]` also works)
+- Not spoken by the text-to-speech engine
+- Replaced by *silence* of the specified duration in the rendered audio
+
+You can place multiple pauses inside a line. Example:
+```
+Take a deep breath in [pause 1.5 seconds] and out [pause 2 seconds] sinking deeper now.
+```
+This produces a single audio file for the entire line with two natural gaps. The pauses are resolved **at generation time**; changing pause durations counts as a changed line (a new audio file will be generated because the full text including the pause tokens is hashed).
+
+Guidelines:
+- Keep pauses within a reasonable range (fractions of a second up to ~10 seconds are fine).
+- A line containing only a pause is ignored (silence-only lines are not generated as separate files).
+- Spacing inside the directive must at least separate the words, e.g. `[pause   2   seconds]` is fine; just make sure the number is present.
+
+If you ever want a literal bracketed phrase read out, avoid the exact `pause ... seconds` pattern (e.g. rephrase or remove the word `seconds`).
+
 ### Config File
 The config file is a JSON file that contains various settings for the audio generation. By default, it is located in `config.json` in the project root, and contains all the default settings. The following options are available:
 
@@ -128,13 +156,19 @@ As with installation, I recommend using [uv](https://docs.astral.sh/uv/) to run 
 3. To stop the program, press `Ctrl+C` in the terminal.
 
 #### Providing Arguments
-You can provide the following arguments when running the program with `uv`:
-- `-t <text_filepath>`: Specify a different text file to use for the hypnosis lines. This will override the default `lines.txt` file in the project root.
-- `-c <config_filepath>`: Specify a different config file to use. This will override the `config.json` file in the project root.
 
-For example, to run the program with a different text file and config file, you would use:
+You can provide the following arguments when running the program:
+
+- `-t <text_filepath>` or `--text-filepath <text_filepath>`: Specify a different text file to use for the hypnosis lines. This will override the default `lines.txt` file in the project root.
+- `-c <config_filepath>` or `--config-filepath <config_filepath>`: Specify a different config file to use. This will override the `config.json` file in the project root.
+- `--debug`: Enable debug logging.
+- `--render-mix`: Render all lines, tone, and mantra into a single audio file (no playback). The mantra will begin at the configured `mantra_start_delay` (from your config). If that delay is longer than the total length of the rendered line audio, the mantra is skipped. Any missing hypnosis line audio is automatically generated first (including handling inline pause directives) before the mix is assembled.
+- `--mix-output <filename>`: Specify the output file name for the rendered mix (default: `full_mix.wav`), tested and supports .wav and .mp3 .
+
+For example, to render a mix and save it as `my_mix.wav`:
 ```bash
 uv run main.py -t /path/to/your/text.txt -c /path/to/your/config.json
+uv run main.py --render-mix --mix-output hypno_mix.wav
 ```
 
 ### Using `pip`
@@ -195,3 +229,47 @@ Currently I'm aware of:
 - Occasional issues where an audio line fails to play, but the rest of the audio continues playing, and the next line plays as expected.
 
 Further issues can be reported on the [GitHub Issues page](https://github.com/s10boi/dynamic_hypno_generator/issues)
+
+## How to Install ffmpeg
+
+### For Windows
+
+1. **Download ffmpeg:**
+   - Go to [https://ffmpeg.org/download.html](https://ffmpeg.org/download.html)
+   - Under “Windows,” choose a build provider (e.g., [gyan.dev](https://www.gyan.dev/ffmpeg/builds/))
+   - Download the “Release full” zip file.
+
+2. **Extract ffmpeg:**
+   - Unzip the downloaded file to a folder, e.g., `C:\ffmpeg`
+   - Inside, find the `bin` folder (e.g., `C:\ffmpeg\ffmpeg-6.x-full_build\bin`) containing `ffmpeg.exe`.
+
+3. **Add ffmpeg to your PATH:**
+   - Press `Win + S` and search for “environment variables”.
+   - Click **Edit the system environment variables**.
+   - In the System Properties window, click **Environment Variables**.
+   - Under **System variables**, select `Path` and click **Edit**.
+   - Click **New** and add the path to the `bin` folder, e.g.:
+     ```
+     C:\ffmpeg\ffmpeg-6.x-full_build\bin
+     ```
+   - Click **OK** to save and close all dialogs.
+
+4. **Verify Installation:**
+   - Open a new Command Prompt window.
+   - Type:
+     ```
+     ffmpeg -version
+     ```
+   - You should see version information printed.
+
+---
+
+### For Mac
+
+1. **Install Homebrew** (if you don’t have it):  
+   [https://brew.sh/](https://brew.sh/)
+
+2. **Install ffmpeg using Homebrew:**
+   ```sh
+   brew install ffmpeg
+   ```
