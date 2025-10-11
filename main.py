@@ -129,7 +129,7 @@ def main() -> None:
         )
         return
 
-
+    # =====================
     # HYPNO LINE GENERATION
     # =====================
     # Start generating audio files from the lines in the source text file
@@ -160,6 +160,7 @@ def main() -> None:
     while not hypno_line_mapping:
         time.sleep(0.1)
 
+    # ================
     # BACKGROUND AUDIO
     # ================
     if config.background_audio:
@@ -174,6 +175,7 @@ def main() -> None:
         # If there's a background audio file, delay before starting to play the hypno lines
         time.sleep(config.initial_line_delay)
 
+    # ===================
     # HYPNO LINE PLAYBACK
     # ===================
     # Two line players are needed - one starting just after the first line is played, but while it's still playing the
@@ -205,6 +207,7 @@ def main() -> None:
         )
         line_player_thread.start()
 
+    # ================
     # MANTRA PLAYBACK
     # ================
     if config.mantra_filepath:
