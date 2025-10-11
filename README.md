@@ -163,7 +163,7 @@ You can provide the following arguments when running the program:
 - `-c <config_filepath>` or `--config-filepath <config_filepath>`: Specify a different config file to use. This will override the `config.json` file in the project root.
 - `--debug`: Enable debug logging.
 - `--render-mix`: Render all lines, tone, and mantra into a single audio file (no playback). The mantra will begin at the configured `mantra_start_delay` (from your config). If that delay is longer than the total length of the rendered line audio, the mantra is skipped. Any missing hypnosis line audio is automatically generated first (including handling inline pause directives) before the mix is assembled.
-- `--mix-output <filename>`: Specify the output file name for the rendered mix (default: `full_mix.wav`).
+- `--mix-output <filename>`: Specify the output file name for the rendered mix (default: `full_mix.wav`), tested and supports .wav and .mp3 .
 
 For example, to render a mix and save it as `my_mix.wav`:
 ```bash
