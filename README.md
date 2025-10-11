@@ -20,6 +20,8 @@ A program that dynamically generates repeating hypnosis audio, complete with sou
 
 ## Requirements
 - [Python 3.13](https://www.python.org/downloads/release/python-313/) or higher.
+- **ffmpeg** (required for audio exporting):
+  - See [How to Install ffmpeg](#how-to-install-ffmpeg) below.
 - **Windows Only**:
   - [Microsoft Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist) - required for audio effects. Ensure you download the right version for your system architecture.
 - **Optional**:
@@ -128,13 +130,19 @@ As with installation, I recommend using [uv](https://docs.astral.sh/uv/) to run 
 3. To stop the program, press `Ctrl+C` in the terminal.
 
 #### Providing Arguments
-You can provide the following arguments when running the program with `uv`:
-- `-t <text_filepath>`: Specify a different text file to use for the hypnosis lines. This will override the default `lines.txt` file in the project root.
-- `-c <config_filepath>`: Specify a different config file to use. This will override the `config.json` file in the project root.
 
-For example, to run the program with a different text file and config file, you would use:
+You can provide the following arguments when running the program:
+
+- `-t <text_filepath>` or `--text-filepath <text_filepath>`: Specify a different text file to use for the hypnosis lines. This will override the default `lines.txt` file in the project root.
+- `-c <config_filepath>` or `--config-filepath <config_filepath>`: Specify a different config file to use. This will override the `config.json` file in the project root.
+- `--debug`: Enable debug logging.
+- `--render-mix`: Render all lines, tone, and mantra into a single audio file (no playback).
+- `--mix-output <filename>`: Specify the output file name for the rendered mix (default: `full_mix.wav`).
+
+For example, to render a mix and save it as `my_mix.wav`:
 ```bash
 uv run main.py -t /path/to/your/text.txt -c /path/to/your/config.json
+uv run main.py --render-mix --mix-output hypno_mix.wav
 ```
 
 ### Using `pip`
@@ -195,3 +203,46 @@ Currently I'm aware of:
 - Occasional issues where an audio line fails to play, but the rest of the audio continues playing, and the next line plays as expected.
 
 Further issues can be reported on the [GitHub Issues page](https://github.com/s10boi/dynamic_hypno_generator/issues)
+
+## How to Install ffmpeg
+
+### For Windows
+
+1. **Download ffmpeg:**
+   - Go to [https://ffmpeg.org/download.html](https://ffmpeg.org/download.html)
+   - Under “Windows,” choose a build provider (e.g., [gyan.dev](https://www.gyan.dev/ffmpeg/builds/))
+   - Download the “Release full” zip file.
+
+2. **Extract ffmpeg:**
+   - Unzip the downloaded file to a folder, e.g., `C:\ffmpeg`
+   - Inside, find the `bin` folder (e.g., `C:\ffmpeg\ffmpeg-6.x-full_build\bin`) containing `ffmpeg.exe`.
+
+3. **Add ffmpeg to your PATH:**
+   - Press `Win + S` and search for “environment variables”.
+   - Click **Edit the system environment variables**.
+   - In the System Properties window, click **Environment Variables**.
+   - Under **System variables**, select `Path` and click **Edit**.
+   - Click **New** and add the path to the `bin` folder, e.g.:
+     ```
+     C:\ffmpeg\ffmpeg-6.x-full_build\bin
+     ```
+   - Click **OK** to save and close all dialogs.
+
+4. **Verify Installation:**
+   - Open a new Command Prompt window.
+   - Type:
+     ```
+     ffmpeg -version
+     ```
+   - You should see version information printed.
+
+---
+
+### For Mac
+
+1. **Install Homebrew** (if you don’t have it):  
+   [https://brew.sh/](https://brew.sh/)
+
+2. **Install ffmpeg using Homebrew:**
+   ```sh
+   brew install ffmpeg

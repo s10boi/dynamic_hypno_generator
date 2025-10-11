@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import multiprocessing
 import sys
 import threading
@@ -9,6 +10,7 @@ from typing import TYPE_CHECKING
 
 from loguru import logger
 from pydantic import ValidationError
+from pydub import AudioSegment
 
 from src.audio.line_player import LinePlayer
 from src.audio.repeating_player import RepeatingAudioPlayer
@@ -47,11 +49,57 @@ LINE_CHOOSERS: dict[str, HypnoLineChooserFn] = {
 }
 
 
+def render_full_mix(
+    lines_dir: Path,
+    background_path: Path | None,
+    mantra_path: Path | None,
+    output_path: Path,
+):
+    # Collect all line files
+    line_files = sorted(lines_dir.glob("*.wav"))
+    if not line_files:
+        logger.error("No hypno lines found to render.")
+        return
+
+    # Concatenate all lines
+    lines_audio = [AudioSegment.from_file(f) for f in line_files]
+    full_lines = sum(lines_audio[1:], lines_audio[0])
+
+    # Overlay background if provided
+    if background_path and background_path.exists():
+        background = AudioSegment.from_file(background_path)
+        background = background * (len(full_lines) // len(background) + 1)
+        background = background[:len(full_lines)]
+        full_lines = full_lines.overlay(background - 10)
+
+    # Overlay mantra if provided
+    if mantra_path and mantra_path.exists():
+        mantra = AudioSegment.from_file(mantra_path)
+        mantra = mantra * (len(full_lines) // len(mantra) + 1)
+        mantra = mantra[:len(full_lines)]
+        full_lines = full_lines.overlay(mantra - 5)
+
+    # Export
+    full_lines.export(output_path, format=output_path.suffix.lstrip('.'))
+    logger.info(f"Exported full mix to {output_path}")
+
+
+def read_args_with_render(default_config_path=DEFAULT_CONFIG_PATH, default_text_path=DEFAULT_TEXT_PATH):
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config-filepath", type=Path, default=default_config_path, help="Path to config file")
+    parser.add_argument("--text-filepath", type=Path, default=default_text_path, help="Path to lines text file")
+    parser.add_argument("--debug", action="store_true", help="Enable debug logging")
+    parser.add_argument("--render-mix", action="store_true", help="Render all lines, tone, and mantra into one file")
+    parser.add_argument("--mix-output", type=str, default="full_mix.wav", help="Output file for the mix")
+ 
+    return parser.parse_args()
+
+
 def main() -> None:
+    # =====
     # SETUP
     # =====
-    # Get settings
-    args = read_args(
+    args = read_args_with_render(
         default_config_path=DEFAULT_CONFIG_PATH,
         default_text_path=DEFAULT_TEXT_PATH,
     )
@@ -70,6 +118,17 @@ def main() -> None:
             f"Failed to load configuration: {e}. Please check the configuration file at {args.config_filepath}.",
         )
         sys.exit(1)
+
+    if args.render_mix:
+        print("RENDER MIX BLOCK REACHED")  # Add this
+        render_full_mix(
+            lines_dir=LINE_DIR,
+            background_path=BACKGROUND_AUDIO.get(config.background_audio),
+            mantra_path=Path(config.mantra_filepath) if config.mantra_filepath else None,
+            output_path=Path(args.mix_output),
+        )
+        return
+
 
     # HYPNO LINE GENERATION
     # =====================
@@ -127,7 +186,7 @@ def main() -> None:
     filepath_queue_thread = threading.Thread(
         target=queue_hypno_lines,
         kwargs={
-            "hypno_line_chooser": get_random_lines,
+            "hypno_line_chooser": LINE_CHOOSERS[config.line_chooser],  # <-- use config value here
             "line_players": line_players,
             "hypno_line_mapping": hypno_line_mapping,
             "hypno_lines_lock": hypno_lines_lock,
@@ -158,7 +217,6 @@ def main() -> None:
             daemon=True,
         )
         mantra_player_thread.start()
-
 
 if __name__ == "__main__":
     main()
