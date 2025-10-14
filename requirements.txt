@@ -12,9 +12,7 @@ numpy==2.3.1
     # via
     #   dynamic-hypno-generator (pyproject.toml)
     #   pedalboard
-pedalboard==0.9.16 ; sys_platform == 'win32'
-    # via dynamic-hypno-generator (pyproject.toml)
-pedalboard==0.9.17 ; sys_platform != 'win32'
+pedalboard==0.9.19
     # via dynamic-hypno-generator (pyproject.toml)
 pydantic==2.11.7
     # via dynamic-hypno-generator (pyproject.toml)
@@ -731,7 +729,7 @@ pypiwin32==223 ; sys_platform == 'win32'
     # via pyttsx3
 pyttsx3==2.99
     # via dynamic-hypno-generator (pyproject.toml)
-pywin32==310 ; sys_platform == 'win32'
+pywin32==311 ; sys_platform == 'win32'
     # via
     #   pypiwin32
     #   pyttsx3
