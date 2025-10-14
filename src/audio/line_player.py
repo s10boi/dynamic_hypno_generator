@@ -60,23 +60,23 @@ class LinePlayer:
         """Play a single audio file with the pedalboard effects."""
         print(hypno_line.text)
 
-        with AudioFile(str(hypno_line.filepath), "r").resampled_to(stream.sample_rate) as audio_file:  # pyright: ignore[reportArgumentType, reportAttributeAccessIssue, reportUnknownVariableType]
+        with AudioFile(str(hypno_line.filepath), "r").resampled_to(stream.sample_rate) as audio_file:
             try:
-                audio_data = audio_file.read(audio_file.frames)  # pyright: ignore[reportUnknownVariableType]
+                audio_data = audio_file.read(audio_file.frames)
             except ValueError as e:
                 logger.error(f"Error reading audio file {hypno_line.filepath}: {e}")
             else:
                 # Add MAX_DELAY silence at the end (so that all delays can be heard)
-                audio_data = np.pad(  # pyright: ignore[reportUnknownVariableType]
-                    audio_data,  # pyright: ignore[reportUnknownArgumentType]
-                    [(0, 0), (0, int((max_delay) * audio_file.samplerate))],  # pyright: ignore[reportUnknownArgumentType]
+                audio_data = np.pad(
+                    audio_data,
+                    [(0, 0), (0, int((max_delay) * audio_file.samplerate))],
                 )
 
                 # Chunk the audio data to avoid memory issues
-                for start in range(0, len(audio_data), chunk_size):  # pyright: ignore[reportUnknownArgumentType]
-                    end = min(start + chunk_size, len(audio_data))  # pyright: ignore[reportUnknownArgumentType]
-                    chunk = audio_data[start:end]  # pyright: ignore[reportUnknownVariableType]
-                    processed_chunk = self.pedalboard(chunk, audio_file.samplerate)  # pyright: ignore[reportUnknownArgumentType]
+                for start in range(0, len(audio_data), chunk_size):
+                    end = min(start + chunk_size, len(audio_data))
+                    chunk = audio_data[start:end]
+                    processed_chunk = self.pedalboard(chunk, audio_file.samplerate)
                     stream.write(processed_chunk, stream.sample_rate)
 
     @classmethod

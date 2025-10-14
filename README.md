@@ -19,7 +19,7 @@ A program that dynamically generates repeating hypnosis audio, complete with sou
 7. [Known Issues](#known-issues)
 
 ## Requirements
-- [Python 3.13](https://www.python.org/downloads/release/python-313/) or higher.
+- [Python 3.13](https://www.python.org/downloads/release/python-313/).
 - **Windows Only**:
   - [Microsoft Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist) - required for audio effects. Ensure you download the right version for your system architecture.
 - **Optional**:

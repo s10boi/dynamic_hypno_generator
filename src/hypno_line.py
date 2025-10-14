@@ -51,7 +51,7 @@ class HypnoLine:
         """
         if self.filepath.exists():
             logger.debug(f"Setting duration for audio file: {self.text}")
-            with AudioFile(str(self.filepath), "r") as audio_file:  # pyright: ignore[reportGeneralTypeIssues, reportArgumentType, reportUnknownVariableType]
+            with AudioFile(str(self.filepath), "r") as audio_file:
                 self.duration = audio_file.duration + 1
                 logger.debug(f"Duration set to {self.duration} seconds for {self.text}")
         else:

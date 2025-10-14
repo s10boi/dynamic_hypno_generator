@@ -127,7 +127,7 @@ def main() -> None:
     filepath_queue_thread = threading.Thread(
         target=queue_hypno_lines,
         kwargs={
-            "hypno_line_chooser": get_random_lines,
+            "hypno_line_chooser": LINE_CHOOSERS[config.line_chooser],
             "line_players": line_players,
             "hypno_line_mapping": hypno_line_mapping,
             "hypno_lines_lock": hypno_lines_lock,
