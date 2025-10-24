@@ -7,13 +7,15 @@ from typing import TYPE_CHECKING, Any, Self, cast
 from loguru import logger
 from pydantic import BaseModel, Field, ValidationError, field_validator
 
+from src.hypno_queue import HypnoLineChooserFn, get_default_line_chooser, get_line_choosers  # noqa: TC001
+
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
     from pydantic import ValidationInfo
 
+
 DEFAULT_BACKGROUND_AUDIO = "tone"
-DEFAULT_LINE_CHOOSER = "sequential"
 DEFAULT_TEXT_PATH = Path("./lines.txt")
 
 
@@ -24,8 +26,8 @@ class Config(BaseModel):
         default=DEFAULT_BACKGROUND_AUDIO,
         description="Type of background audio to play.",
     )
-    line_chooser: str = Field(
-        default=DEFAULT_LINE_CHOOSER,
+    line_chooser: HypnoLineChooserFn = Field(
+        default_factory=get_default_line_chooser,
         description="Function to choose hypno lines.",
     )
     initial_line_delay: float = Field(
@@ -78,22 +80,25 @@ class Config(BaseModel):
         msg = f"Invalid context for background audio validation: {info.context}"
         raise ValueError(msg)
 
-    @field_validator("line_chooser", mode="after")
+    @field_validator("line_chooser", mode="before")
     @classmethod
-    def validate_line_chooser_fn(cls, value: str, info: ValidationInfo) -> str:
+    def validate_line_chooser_fn(cls, value: str | HypnoLineChooserFn) -> HypnoLineChooserFn:
         """Validate the line chooser function against available options.
+
+        Returns:
+            HypnoLineChooserFn: The validated line chooser function.
 
         Raises:
             ValueError: If the provided line chooser function is not valid.
         """
-        if isinstance(info.context, dict):
-            available_line_choosers = cast("Iterable[str]", info.context.get("available_line_choosers", []))
-            if value not in available_line_choosers:
-                msg = f"Invalid line chooser function: {value}. Available options: {', '.join(available_line_choosers)}"
+        line_choosers = get_line_choosers()
+
+        if isinstance(value, str):
+            if not (line_chooser_fn := line_choosers.get(value)):
+                msg = f"Invalid line chooser function: {value}. Available options: {', '.join(line_choosers.keys())}"
                 raise ValueError(msg)
-            return value
-        msg = f"Invalid context for line chooser function validation: {info.context}"
-        raise ValueError(msg)
+            return line_chooser_fn
+        return value
 
     @field_validator("mantra_filepath", mode="before")
     @classmethod
@@ -112,7 +117,6 @@ class Config(BaseModel):
         *,
         json_filepath: Path,
         available_backgrounds: Iterable[str],
-        available_line_choosers: Iterable[str],
     ) -> Self:
         """Create a Config instance from a provided JSON file path and text file path.
 
@@ -121,7 +125,6 @@ class Config(BaseModel):
         Args:
             json_filepath (Path): Path to the JSON configuration file.
             available_backgrounds (Iterable[str]): Available background audio types for validation.
-            available_line_choosers (Iterable[str]): Available line chooser functions for validation.
 
         Returns:
             Config: An instance of the Config class with settings loaded from the JSON file.
@@ -137,16 +140,12 @@ class Config(BaseModel):
                     json_filepath.read_text(encoding="utf-8"),
                     context={
                         "available_backgrounds": available_backgrounds,
-                        "available_line_choosers": available_line_choosers,
                     },
                 )
                 logger.debug(f"Configuration loaded: {config}")
             except ValidationError as e:
-                raise ValidationError(
-                    e.errors(),
-                    cls,
-                    json_filepath,
-                ) from e
+                logger.error(f"Failed to validate configuration from {json_filepath}: {e}")
+                raise
         else:
             msg = f"Configuration file {json_filepath} not found."
             raise FileNotFoundError(msg)

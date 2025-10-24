@@ -63,6 +63,53 @@ def queue_hypno_lines(
             time.sleep(hypno_line.duration)
 
 
+line_choosers: dict[str, HypnoLineChooserFn] = {}
+
+
+def get_line_choosers() -> dict[str, HypnoLineChooserFn]:
+    """Get the registered line choosers.
+
+    Returns:
+        dict[str, HypnoLineChooserFn]: A mapping of line chooser names to their functions.
+    """
+    return line_choosers.copy()
+
+
+def get_default_line_chooser() -> HypnoLineChooserFn:
+    """Get the default line chooser name (first registered chooser).
+
+    Returns:
+        HypnoLineChooserFn: The default line chooser function.
+
+    Raises:
+        ValueError: If no line choosers have been registered.
+    """
+    available_choosers = get_line_choosers()
+
+    if available_choosers:
+        return next(iter(available_choosers.values()))
+    msg = "No line choosers have been registered."
+    raise ValueError(msg)
+
+
+def register_line_chooser(name: str) -> Callable[[HypnoLineChooserFn], HypnoLineChooserFn]:
+    """Decorator to register a HypnoLineChooserFn with a given name.
+
+    Args:
+        name (str): The name to register the line chooser under.
+
+    Returns:
+        Callable[[HypnoLineChooserFn], HypnoLineChooserFn]: The decorator function.
+    """
+
+    def decorator(func: HypnoLineChooserFn) -> HypnoLineChooserFn:
+        line_choosers[name] = func
+        return func
+
+    return decorator
+
+
+@register_line_chooser("sequential")
 def get_sequential_lines(
     hypno_line_mapping: Mapping[str, HypnoLine],
     hypno_lines_lock: multiprocessing.synchronize.Lock,
@@ -88,6 +135,7 @@ def get_sequential_lines(
         yield from hypno_lines
 
 
+@register_line_chooser("sequential_refreshing")
 def get_sequential_refreshing_lines(
     hypno_line_mapping: Mapping[str, HypnoLine],
     hypno_lines_lock: multiprocessing.synchronize.Lock,
@@ -129,6 +177,7 @@ def get_sequential_refreshing_lines(
             yield hypno_line
 
 
+@register_line_chooser("shuffled")
 def get_shuffled_lines(
     hypno_line_mapping: Mapping[str, HypnoLine],
     hypno_lines_lock: multiprocessing.synchronize.Lock,
@@ -164,6 +213,7 @@ def get_shuffled_lines(
                 yield hypno_line
 
 
+@register_line_chooser("random")
 def get_random_lines(
     hypno_line_mapping: Mapping[str, HypnoLine],
     hypno_lines_lock: multiprocessing.synchronize.Lock,

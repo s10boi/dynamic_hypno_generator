@@ -30,11 +30,10 @@ class LinePlayer:
     """
 
     def __init__(self, *, pedalboard: Pedalboard) -> None:
-        """Initialize a LinePlayer with a pedalboard and an initial delay.
+        """Initialize a LinePlayer with a pedalboard.
 
         Args:
             pedalboard (Pedalboard): The Pedalboard instance containing audio effects.
-            initial_delay (float): The initial delay in seconds before playback starts.
         """
         self.pedalboard = pedalboard
         self.queue = Queue[HypnoLine](maxsize=1)

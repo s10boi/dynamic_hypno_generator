@@ -5,7 +5,6 @@ import sys
 import threading
 import time
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 from loguru import logger
 from pydantic import ValidationError
@@ -15,18 +14,9 @@ from src.audio.repeating_player import RepeatingAudioPlayer
 from src.audio.tts import generate_audio
 from src.config import Config, read_args
 from src.hypno_queue import (
-    get_random_lines,
-    get_sequential_lines,
-    get_sequential_refreshing_lines,
-    get_shuffled_lines,
     queue_hypno_lines,
 )
 from src.log import configure_logger
-
-if TYPE_CHECKING:
-    from src.hypno_queue import (
-        HypnoLineChooserFn,
-    )
 
 DEFAULT_CONFIG_PATH = Path("./config.json")
 DEFAULT_TEXT_PATH = Path("./lines.txt")
@@ -37,13 +27,6 @@ LINE_DIR = Path("./import/lines")
 BACKGROUND_AUDIO: dict[str, Path] = {
     "tone": Path("./import/background/tone.wav"),
     "noise": Path("./import/background/noise.wav"),
-}
-
-LINE_CHOOSERS: dict[str, HypnoLineChooserFn] = {
-    "sequential": get_sequential_lines,
-    "sequential_refreshing": get_sequential_refreshing_lines,
-    "shuffled": get_shuffled_lines,
-    "random": get_random_lines,
 }
 
 
@@ -63,7 +46,6 @@ def main() -> None:
         config = Config.from_args(
             json_filepath=args.config_filepath,
             available_backgrounds=BACKGROUND_AUDIO.keys(),
-            available_line_choosers=LINE_CHOOSERS.keys(),
         )
     except (FileNotFoundError, ValidationError) as e:
         logger.critical(
@@ -127,7 +109,7 @@ def main() -> None:
     filepath_queue_thread = threading.Thread(
         target=queue_hypno_lines,
         kwargs={
-            "hypno_line_chooser": LINE_CHOOSERS[config.line_chooser],
+            "hypno_line_chooser": config.line_chooser,
             "line_players": line_players,
             "hypno_line_mapping": hypno_line_mapping,
             "hypno_lines_lock": hypno_lines_lock,
