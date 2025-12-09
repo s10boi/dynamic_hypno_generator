@@ -23,7 +23,7 @@ def test_get_sequential_lines_single(lock: multiprocessing.synchronize.Lock) -> 
         "1": hypno_line,
     }
 
-    line_generator = get_sequential_lines(hypno_line_mapping=mapping, hypno_lines_lock=lock)  # pyright: ignore[reportUnknownArgumentType]
+    line_generator = get_sequential_lines(mapping, lock)  # pyright: ignore[reportUnknownArgumentType]
 
     # Checking that the same HypnoLine instance is returned
     assert next(line_generator) == hypno_line
@@ -39,7 +39,7 @@ def test_get_sequential_lines_multiple(lock: multiprocessing.synchronize.Lock) -
         "2": hypno_line2,
     }
 
-    line_generator = get_sequential_lines(hypno_line_mapping=mapping, hypno_lines_lock=lock)  # pyright: ignore[reportUnknownArgumentType]
+    line_generator = get_sequential_lines(mapping, lock)  # pyright: ignore[reportUnknownArgumentType]
 
     # Checking that the generator returns the correct HypnoLines in order
     assert next(line_generator) == hypno_line1
@@ -56,7 +56,7 @@ def test_get_sequential_lines_changing_lines(lock: multiprocessing.synchronize.L
         "2": hypno_line2,
     }
 
-    line_generator = get_sequential_lines(hypno_line_mapping=mapping, hypno_lines_lock=lock)  # pyright: ignore[reportUnknownArgumentType]
+    line_generator = get_sequential_lines(mapping, lock)  # pyright: ignore[reportUnknownArgumentType]
 
     assert next(line_generator) == hypno_line1
 
@@ -80,7 +80,7 @@ def test_get_sequential_refreshing_lines_single(lock: multiprocessing.synchroniz
         "1": hypno_line,
     }
 
-    line_generator = get_sequential_refreshing_lines(hypno_line_mapping=mapping, hypno_lines_lock=lock)  # pyright: ignore[reportUnknownArgumentType]
+    line_generator = get_sequential_refreshing_lines(mapping, lock)  # pyright: ignore[reportUnknownArgumentType]
 
     # Checking that the same HypnoLine instance is returned
     assert next(line_generator) == hypno_line
@@ -96,7 +96,7 @@ def test_get_sequential_refreshing_lines_multiple(lock: multiprocessing.synchron
         "2": hypno_line2,
     }
 
-    line_generator = get_sequential_refreshing_lines(hypno_line_mapping=mapping, hypno_lines_lock=lock)  # pyright: ignore[reportUnknownArgumentType]
+    line_generator = get_sequential_refreshing_lines(mapping, lock)  # pyright: ignore[reportUnknownArgumentType]
 
     # Checking that the generator returns the correct HypnoLines in order
     assert next(line_generator) == hypno_line1
@@ -113,7 +113,7 @@ def test_get_sequential_refreshing_lines_changing_lines(lock: multiprocessing.sy
         "2": hypno_line2,
     }
 
-    line_generator = get_sequential_refreshing_lines(hypno_line_mapping=mapping, hypno_lines_lock=lock)  # pyright: ignore[reportUnknownArgumentType]
+    line_generator = get_sequential_refreshing_lines(mapping, lock)  # pyright: ignore[reportUnknownArgumentType]
 
     assert next(line_generator) == hypno_line1
     # Change the mapping to a new set of lines
@@ -136,7 +136,7 @@ def test_get_shuffled_lines_single(lock: multiprocessing.synchronize.Lock) -> No
         "1": hypno_line,
     }
 
-    line_generator = get_shuffled_lines(hypno_line_mapping=mapping, hypno_lines_lock=lock)  # pyright: ignore[reportUnknownArgumentType]
+    line_generator = get_shuffled_lines(mapping, lock)  # pyright: ignore[reportUnknownArgumentType]
 
     # Checking that the same HypnoLine instance is returned even though it's a repeat (as it's the only one)
     assert next(line_generator) == hypno_line
@@ -152,7 +152,7 @@ def test_get_shuffled_lines_no_repeat_line(lock: multiprocessing.synchronize.Loc
         "2": hypno_line2,
     }
 
-    line_generator = get_shuffled_lines(hypno_line_mapping=mapping, hypno_lines_lock=lock)  # pyright: ignore[reportUnknownArgumentType]
+    line_generator = get_shuffled_lines(mapping, lock)  # pyright: ignore[reportUnknownArgumentType]
 
     # Checking that the generator never returns the same HypnoLine twice in a row
     for _ in range(1000):  # Check multiple iterations
@@ -169,7 +169,7 @@ def test_get_random_lines_single(lock: multiprocessing.synchronize.Lock) -> None
         "1": hypno_line,
     }
 
-    line_generator = get_random_lines(hypno_line_mapping=mapping, hypno_lines_lock=lock)  # pyright: ignore[reportUnknownArgumentType]
+    line_generator = get_random_lines(mapping, lock)  # pyright: ignore[reportUnknownArgumentType]
 
     # Checking that the same HypnoLine instance is returned even though it's a repeat (as it's the only one)
     assert next(line_generator) == hypno_line
@@ -185,7 +185,7 @@ def test_get_random_lines_multiple(lock: multiprocessing.synchronize.Lock) -> No
         "2": hypno_line2,
     }
 
-    line_generator = get_random_lines(hypno_line_mapping=mapping, hypno_lines_lock=lock)  # pyright: ignore[reportUnknownArgumentType]
+    line_generator = get_random_lines(mapping, lock)  # pyright: ignore[reportUnknownArgumentType]
 
     # Checking that the generator never returns the same HypnoLine twice in a row
     for _ in range(1000):  # Check multiple iterations
