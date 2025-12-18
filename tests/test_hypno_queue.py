@@ -8,7 +8,7 @@ from src.hypno_queue import get_random_lines, get_sequential_lines, get_sequenti
 
 
 @pytest.fixture
-def lock() -> multiprocessing.synchronize.Lock:  # pyright: ignore[reportAttributeAccessIssue, reportUnknownParameterType]
+def lock() -> multiprocessing.synchronize.Lock:  # ty:ignore[possibly-missing-attribute]
     """Fixture to provide a multiprocessing lock."""
     manager = multiprocessing.Manager()
     return manager.Lock()
@@ -16,21 +16,21 @@ def lock() -> multiprocessing.synchronize.Lock:  # pyright: ignore[reportAttribu
 
 # SEQUENTIAL LINES TESTS
 # ======================
-def test_get_sequential_lines_single(lock: multiprocessing.synchronize.Lock) -> None:  # pyright: ignore[reportAttributeAccessIssue, reportUnknownParameterType]
+def test_get_sequential_lines_single(lock: multiprocessing.synchronize.Lock) -> None:  # ty:ignore[possibly-missing-attribute]
     hypno_line = HypnoLine(text="1", filepath=Path("1.wav"))
 
     mapping: dict[str, HypnoLine] = {
         "1": hypno_line,
     }
 
-    line_generator = get_sequential_lines(mapping, lock)  # pyright: ignore[reportUnknownArgumentType]
+    line_generator = get_sequential_lines(mapping, lock)
 
     # Checking that the same HypnoLine instance is returned
     assert next(line_generator) == hypno_line
     assert next(line_generator) == hypno_line
 
 
-def test_get_sequential_lines_multiple(lock: multiprocessing.synchronize.Lock) -> None:  # pyright: ignore[reportAttributeAccessIssue, reportUnknownParameterType]
+def test_get_sequential_lines_multiple(lock: multiprocessing.synchronize.Lock) -> None:  # ty:ignore[possibly-missing-attribute]
     hypno_line1 = HypnoLine(text="1", filepath=Path("1.wav"))
     hypno_line2 = HypnoLine(text="2", filepath=Path("2.wav"))
 
@@ -39,7 +39,7 @@ def test_get_sequential_lines_multiple(lock: multiprocessing.synchronize.Lock) -
         "2": hypno_line2,
     }
 
-    line_generator = get_sequential_lines(mapping, lock)  # pyright: ignore[reportUnknownArgumentType]
+    line_generator = get_sequential_lines(mapping, lock)
 
     # Checking that the generator returns the correct HypnoLines in order
     assert next(line_generator) == hypno_line1
@@ -47,7 +47,7 @@ def test_get_sequential_lines_multiple(lock: multiprocessing.synchronize.Lock) -
     assert next(line_generator) == hypno_line1  # Should loop back to the first line
 
 
-def test_get_sequential_lines_changing_lines(lock: multiprocessing.synchronize.Lock) -> None:  # pyright: ignore[reportAttributeAccessIssue, reportUnknownParameterType]
+def test_get_sequential_lines_changing_lines(lock: multiprocessing.synchronize.Lock) -> None:  # ty:ignore[possibly-missing-attribute]
     hypno_line1 = HypnoLine(text="1", filepath=Path("1.wav"))
     hypno_line2 = HypnoLine(text="2", filepath=Path("2.wav"))
 
@@ -56,7 +56,7 @@ def test_get_sequential_lines_changing_lines(lock: multiprocessing.synchronize.L
         "2": hypno_line2,
     }
 
-    line_generator = get_sequential_lines(mapping, lock)  # pyright: ignore[reportUnknownArgumentType]
+    line_generator = get_sequential_lines(mapping, lock)
 
     assert next(line_generator) == hypno_line1
 
@@ -73,21 +73,21 @@ def test_get_sequential_lines_changing_lines(lock: multiprocessing.synchronize.L
 
 # SEQUENTIAL REFRESHING LINES TESTS
 # =================================
-def test_get_sequential_refreshing_lines_single(lock: multiprocessing.synchronize.Lock) -> None:  # pyright: ignore[reportAttributeAccessIssue, reportUnknownParameterType]
+def test_get_sequential_refreshing_lines_single(lock: multiprocessing.synchronize.Lock) -> None:  # ty:ignore[possibly-missing-attribute]
     hypno_line = HypnoLine(text="1", filepath=Path("1.wav"))
 
     mapping: dict[str, HypnoLine] = {
         "1": hypno_line,
     }
 
-    line_generator = get_sequential_refreshing_lines(mapping, lock)  # pyright: ignore[reportUnknownArgumentType]
+    line_generator = get_sequential_refreshing_lines(mapping, lock)
 
     # Checking that the same HypnoLine instance is returned
     assert next(line_generator) == hypno_line
     assert next(line_generator) == hypno_line
 
 
-def test_get_sequential_refreshing_lines_multiple(lock: multiprocessing.synchronize.Lock) -> None:  # pyright: ignore[reportAttributeAccessIssue, reportUnknownParameterType]
+def test_get_sequential_refreshing_lines_multiple(lock: multiprocessing.synchronize.Lock) -> None:  # ty:ignore[possibly-missing-attribute]
     hypno_line1 = HypnoLine(text="1", filepath=Path("1.wav"))
     hypno_line2 = HypnoLine(text="2", filepath=Path("2.wav"))
 
@@ -96,7 +96,7 @@ def test_get_sequential_refreshing_lines_multiple(lock: multiprocessing.synchron
         "2": hypno_line2,
     }
 
-    line_generator = get_sequential_refreshing_lines(mapping, lock)  # pyright: ignore[reportUnknownArgumentType]
+    line_generator = get_sequential_refreshing_lines(mapping, lock)
 
     # Checking that the generator returns the correct HypnoLines in order
     assert next(line_generator) == hypno_line1
@@ -104,7 +104,7 @@ def test_get_sequential_refreshing_lines_multiple(lock: multiprocessing.synchron
     assert next(line_generator) == hypno_line1  # Should loop back to the first
 
 
-def test_get_sequential_refreshing_lines_changing_lines(lock: multiprocessing.synchronize.Lock) -> None:  # pyright: ignore[reportAttributeAccessIssue, reportUnknownParameterType]
+def test_get_sequential_refreshing_lines_changing_lines(lock: multiprocessing.synchronize.Lock) -> None:  # ty:ignore[possibly-missing-attribute]
     hypno_line1 = HypnoLine(text="1", filepath=Path("1.wav"))
     hypno_line2 = HypnoLine(text="2", filepath=Path("2.wav"))
 
@@ -113,7 +113,7 @@ def test_get_sequential_refreshing_lines_changing_lines(lock: multiprocessing.sy
         "2": hypno_line2,
     }
 
-    line_generator = get_sequential_refreshing_lines(mapping, lock)  # pyright: ignore[reportUnknownArgumentType]
+    line_generator = get_sequential_refreshing_lines(mapping, lock)
 
     assert next(line_generator) == hypno_line1
     # Change the mapping to a new set of lines
@@ -129,21 +129,21 @@ def test_get_sequential_refreshing_lines_changing_lines(lock: multiprocessing.sy
 
 # SHUFFLED LINES TESTS
 # ====================
-def test_get_shuffled_lines_single(lock: multiprocessing.synchronize.Lock) -> None:  # pyright: ignore[reportAttributeAccessIssue, reportUnknownParameterType]
+def test_get_shuffled_lines_single(lock: multiprocessing.synchronize.Lock) -> None:  # ty:ignore[possibly-missing-attribute]
     hypno_line = HypnoLine(text="1", filepath=Path("1.wav"))
 
     mapping: dict[str, HypnoLine] = {
         "1": hypno_line,
     }
 
-    line_generator = get_shuffled_lines(mapping, lock)  # pyright: ignore[reportUnknownArgumentType]
+    line_generator = get_shuffled_lines(mapping, lock)
 
     # Checking that the same HypnoLine instance is returned even though it's a repeat (as it's the only one)
     assert next(line_generator) == hypno_line
     assert next(line_generator) == hypno_line
 
 
-def test_get_shuffled_lines_no_repeat_line(lock: multiprocessing.synchronize.Lock) -> None:  # pyright: ignore[reportAttributeAccessIssue, reportUnknownParameterType]
+def test_get_shuffled_lines_no_repeat_line(lock: multiprocessing.synchronize.Lock) -> None:  # ty:ignore[possibly-missing-attribute]
     hypno_line1 = HypnoLine(text="1", filepath=Path("1.wav"))
     hypno_line2 = HypnoLine(text="2", filepath=Path("2.wav"))
 
@@ -152,7 +152,7 @@ def test_get_shuffled_lines_no_repeat_line(lock: multiprocessing.synchronize.Loc
         "2": hypno_line2,
     }
 
-    line_generator = get_shuffled_lines(mapping, lock)  # pyright: ignore[reportUnknownArgumentType]
+    line_generator = get_shuffled_lines(mapping, lock)
 
     # Checking that the generator never returns the same HypnoLine twice in a row
     for _ in range(1000):  # Check multiple iterations
@@ -162,21 +162,21 @@ def test_get_shuffled_lines_no_repeat_line(lock: multiprocessing.synchronize.Loc
 
 # RANDOM LINES TESTS
 # ==================
-def test_get_random_lines_single(lock: multiprocessing.synchronize.Lock) -> None:  # pyright: ignore[reportAttributeAccessIssue, reportUnknownParameterType]
+def test_get_random_lines_single(lock: multiprocessing.synchronize.Lock) -> None:  # ty:ignore[possibly-missing-attribute]
     hypno_line = HypnoLine(text="1", filepath=Path("1.wav"))
 
     mapping: dict[str, HypnoLine] = {
         "1": hypno_line,
     }
 
-    line_generator = get_random_lines(mapping, lock)  # pyright: ignore[reportUnknownArgumentType]
+    line_generator = get_random_lines(mapping, lock)
 
     # Checking that the same HypnoLine instance is returned even though it's a repeat (as it's the only one)
     assert next(line_generator) == hypno_line
     assert next(line_generator) == hypno_line
 
 
-def test_get_random_lines_multiple(lock: multiprocessing.synchronize.Lock) -> None:  # pyright: ignore[reportAttributeAccessIssue, reportUnknownParameterType]
+def test_get_random_lines_multiple(lock: multiprocessing.synchronize.Lock) -> None:  # ty:ignore[possibly-missing-attribute]
     hypno_line1 = HypnoLine(text="1", filepath=Path("1.wav"))
     hypno_line2 = HypnoLine(text="2", filepath=Path("2.wav"))
 
@@ -185,7 +185,7 @@ def test_get_random_lines_multiple(lock: multiprocessing.synchronize.Lock) -> No
         "2": hypno_line2,
     }
 
-    line_generator = get_random_lines(mapping, lock)  # pyright: ignore[reportUnknownArgumentType]
+    line_generator = get_random_lines(mapping, lock)
 
     # Checking that the generator never returns the same HypnoLine twice in a row
     for _ in range(1000):  # Check multiple iterations

@@ -20,9 +20,9 @@ class RepeatingAudioPlayer:
 
     def play_audio_file(self, chunk_size: int) -> None:
         """Play the audio file in a loop."""
-        with AudioStream(output_device_name=AudioStream.default_output_device_name) as stream:  # pyright: ignore[reportUnknownArgumentType]
+        with AudioStream(output_device_name=AudioStream.default_output_device_name) as stream:
             while True:
-                with AudioFile(str(self.audio_filepath), "r").resampled_to(stream.sample_rate) as audio_file:
+                with AudioFile(str(self.audio_filepath), "r").resampled_to(stream.sample_rate) as audio_file:  # ty:ignore[no-matching-overload, unresolved-attribute]
                     while audio_file.tell() < audio_file.frames:
                         # Process and play the audio in chunks
                         audio = audio_file.read(chunk_size)

@@ -9,7 +9,7 @@ from pedalboard import (
     Delay,
     Gain,
     Mix,
-    Pedalboard,  # pyright: ignore[reportPrivateImportUsage]
+    Pedalboard,
     PitchShift,
 )
 from pedalboard.io import AudioFile, AudioStream
@@ -45,7 +45,7 @@ class LinePlayer:
             chunk_size (int): The number of frames to read at a time.
             max_delay (int): The maximum delay in seconds to add at the end of the audio.
         """
-        with AudioStream(output_device_name=AudioStream.default_output_device_name) as stream:  # pyright: ignore[reportUnknownArgumentType]
+        with AudioStream(output_device_name=AudioStream.default_output_device_name) as stream:
             while True:
                 hypno_line = self.queue.get()
                 self._play_file(
@@ -59,7 +59,7 @@ class LinePlayer:
         """Play a single audio file with the pedalboard effects."""
         print(hypno_line.text)
 
-        with AudioFile(str(hypno_line.filepath), "r").resampled_to(stream.sample_rate) as audio_file:
+        with AudioFile(str(hypno_line.filepath), "r").resampled_to(stream.sample_rate) as audio_file:  # ty:ignore[no-matching-overload, unresolved-attribute]
             try:
                 audio_data = audio_file.read(audio_file.frames)
             except ValueError as e:
@@ -96,4 +96,4 @@ class LinePlayer:
             for i in range(1, config.max_echoes + 1)
         )
 
-        return cls(pedalboard=Pedalboard([Mix(boards)]))  # pyright: ignore[reportArgumentType]
+        return cls(pedalboard=Pedalboard([Mix(boards)]))
