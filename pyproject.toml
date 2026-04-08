@@ -1,6 +1,6 @@
 [project]
 name = "dynamic-hypno-generator"
-version = "0.1.13"
+version = "0.1.14"
 description = "A program that dynamically generates repeating hypnosis audio, complete with sound effects and multi-layered audio, using text-to-speech."
 authors = [
   {name = "s10boi"},
@@ -18,7 +18,6 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "pre-commit>=4.3.0",
     "pytest>=8.3.2",
     "ruff>=0.6.4",
     "ty>=0.0.3",

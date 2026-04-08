@@ -96,4 +96,4 @@ class LinePlayer:
             for i in range(1, config.max_echoes + 1)
         )
 
-        return cls(pedalboard=Pedalboard([Mix(boards)]))
+        return cls(pedalboard=Pedalboard([Mix(boards)]))  # ty:ignore[invalid-argument-type]
